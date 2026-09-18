@@ -33,6 +33,11 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# extracted roster data from the old site (real names/USNs/photos of students) —
+# kept local-only, not published to the public repo. Run `npm run seed` locally
+# using these files if you need to re-seed.
+/seed-data
+
 # vercel
 .vercel
 
