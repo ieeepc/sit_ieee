@@ -4,6 +4,7 @@ import Reveal from "@/components/Reveal";
 import MarqueeCards from "@/components/MarqueeCards";
 import HeroSpotlight from "@/components/HeroSpotlight";
 import CountUp from "@/components/CountUp";
+import RotatingTagline from "@/components/RotatingTagline";
 import { connectDB } from "@/lib/db";
 import Event from "@/models/Event";
 
@@ -72,15 +73,18 @@ export default async function Home() {
           </Reveal>
 
           <Reveal delay={0.08}>
-            <h1 className="mt-8 max-w-5xl font-display text-4xl font-semibold leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl">
-              SIT IEEE Photonics <span className="text-gradient-animated">&amp; ComSoc</span> Joint Chapter
+            <h1 className="text-gradient-animated mt-8 max-w-5xl font-display text-4xl font-semibold leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl">
+              SIT IEEE Photonics &amp; ComSoc Joint Chapter
             </h1>
           </Reveal>
 
           <Reveal delay={0.16}>
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-text-muted sm:text-lg lg:text-xl">
-              Where we learn. A student-run technical club at Siddaganga Institute of Technology,
-              bridging academic learning and professional development since 2019.
+            <p className="mt-6 font-display text-xl font-semibold sm:text-2xl lg:text-3xl">
+              <RotatingTagline />
+            </p>
+            <p className="mt-3 max-w-2xl text-base leading-relaxed text-text-muted sm:text-lg lg:text-xl">
+              A student-run technical club at Siddaganga Institute of Technology, bridging academic
+              learning and professional development since 2019.
             </p>
           </Reveal>
 

@@ -13,7 +13,7 @@ export async function GET() {
 
 const createSchema = z.object({
   name: z.string().trim().min(2),
-  date: z.string(),
+  date: z.string().optional(),
   description: z.string().trim().default(""),
   location: z.string().trim().default(""),
   registrationLink: z.string().trim().url().or(z.literal("")).default(""),
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 
     const event = await UpcomingEvent.create({
       name: body.name,
-      date: new Date(body.date),
+      date: body.date ? new Date(body.date) : undefined,
       description: body.description,
       location: body.location,
       registrationLink: body.registrationLink,

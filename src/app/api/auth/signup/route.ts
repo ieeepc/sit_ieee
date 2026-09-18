@@ -6,6 +6,7 @@ import Member from "@/models/Member";
 import { MEMBER_COOKIE, signMemberToken } from "@/lib/auth";
 
 const signupSchema = z.object({
+  secretKey: z.string().min(1, "Enter the chapter secret key"),
   name: z.string().trim().min(2, "Name is too short"),
   usn: z.string().trim().min(3, "Enter a valid USN"),
   email: z.string().trim().email("Enter a valid email"),
@@ -15,6 +16,17 @@ const signupSchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     const body = signupSchema.parse(await req.json());
+
+    if (!process.env.SIGNUP_SECRET_KEY) {
+      return NextResponse.json(
+        { message: "SIGNUP_SECRET_KEY is not configured on the server." },
+        { status: 500 }
+      );
+    }
+    if (body.secretKey !== process.env.SIGNUP_SECRET_KEY) {
+      return NextResponse.json({ message: "Incorrect secret key." }, { status: 403 });
+    }
+
     const usn = body.usn.toLowerCase();
     const email = body.email.toLowerCase();
 

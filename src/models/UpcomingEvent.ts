@@ -4,7 +4,7 @@ import { Schema, model, models, type InferSchemaType } from "mongoose";
 const upcomingEventSchema = new Schema(
   {
     name: { type: String, required: true, trim: true },
-    date: { type: Date, required: true },
+    date: { type: Date }, // optional — some events are announced before a date is locked in
     description: { type: String, default: "" },
     location: { type: String, default: "" },
     registrationLink: { type: String, default: "" },

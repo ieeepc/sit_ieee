@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { LogIn, UserPlus, Loader2 } from "lucide-react";
+import { LogIn, UserPlus, Loader2, KeyRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/components/SessionProvider";
 import Reveal from "@/components/Reveal";
@@ -16,7 +16,7 @@ export default function MemberLoginPage() {
   const [loading, setLoading] = useState(false);
 
   const [loginForm, setLoginForm] = useState({ usn: "", password: "" });
-  const [signupForm, setSignupForm] = useState({ name: "", usn: "", email: "", password: "" });
+  const [signupForm, setSignupForm] = useState({ secretKey: "", name: "", usn: "", email: "", password: "" });
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -111,7 +111,7 @@ export default function MemberLoginPage() {
                   required
                   value={loginForm.usn}
                   onChange={(e) => setLoginForm({ ...loginForm, usn: e.target.value })}
-                  placeholder="1si22et041"
+                  placeholder="USN"
                   className={inputClass}
                 />
               </Field>
@@ -121,7 +121,7 @@ export default function MemberLoginPage() {
                   type="password"
                   value={loginForm.password}
                   onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                  placeholder="••••••••"
+                  placeholder="Password"
                   className={inputClass}
                 />
               </Field>
@@ -129,12 +129,25 @@ export default function MemberLoginPage() {
             </form>
           ) : (
             <form onSubmit={handleSignup} className="flex flex-col gap-4">
+              <Field label="Secret Key">
+                <input
+                  required
+                  value={signupForm.secretKey}
+                  onChange={(e) => setSignupForm({ ...signupForm, secretKey: e.target.value })}
+                  placeholder="Secret Key"
+                  className={inputClass}
+                />
+                <span className="mt-1.5 flex items-center gap-1.5 text-xs text-text-faint">
+                  <KeyRound size={12} />
+                  Ask a chapter member for this if you don&apos;t have it.
+                </span>
+              </Field>
               <Field label="Full Name">
                 <input
                   required
                   value={signupForm.name}
                   onChange={(e) => setSignupForm({ ...signupForm, name: e.target.value })}
-                  placeholder="Yashaswini T"
+                  placeholder="Full Name"
                   className={inputClass}
                 />
               </Field>
@@ -143,7 +156,7 @@ export default function MemberLoginPage() {
                   required
                   value={signupForm.usn}
                   onChange={(e) => setSignupForm({ ...signupForm, usn: e.target.value })}
-                  placeholder="1si22et041"
+                  placeholder="USN"
                   className={inputClass}
                 />
               </Field>
@@ -153,7 +166,7 @@ export default function MemberLoginPage() {
                   type="email"
                   value={signupForm.email}
                   onChange={(e) => setSignupForm({ ...signupForm, email: e.target.value })}
-                  placeholder="you@example.com"
+                  placeholder="Email"
                   className={inputClass}
                 />
               </Field>
@@ -164,7 +177,7 @@ export default function MemberLoginPage() {
                   minLength={6}
                   value={signupForm.password}
                   onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })}
-                  placeholder="At least 6 characters"
+                  placeholder="Password"
                   className={inputClass}
                 />
               </Field>

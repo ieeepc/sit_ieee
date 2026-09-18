@@ -52,19 +52,19 @@ export default async function OurTeamPage() {
   const members = await getMembers();
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20 lg:py-24">
+    <div className="mx-auto max-w-6xl px-5 py-12 sm:py-16 lg:py-20">
       <Reveal>
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-faint">The people behind it</p>
         <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
           Our <span className="text-gradient">Team</span>
         </h1>
         <p className="mt-4 max-w-xl text-base text-text-muted sm:text-lg">
-          Students who volunteer their time to build workshops, events, and community.
+          A passionate group of learners, builders, and leaders driving innovation, connection, and impact.
         </p>
       </Reveal>
 
       {/* Faculty Coordinators */}
-      <section className="mt-16 sm:mt-20">
+      <section className="mt-10 sm:mt-12">
         <Reveal>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-faint">Guided by</p>
           <h2 className="mt-2 font-display text-2xl font-semibold sm:text-3xl">Faculty Coordinators</h2>
@@ -93,15 +93,17 @@ export default async function OurTeamPage() {
         </Reveal>
 
         <Reveal delay={0.08}>
-          <div className="relative mt-8 aspect-[16/8] w-full overflow-hidden rounded-2xl ring-1 ring-border-strong sm:aspect-[16/7]">
-            <Image
-              src="/team-founders.jpeg"
-              alt="Team Founders — 2019"
-              fill
-              sizes="(min-width: 1024px) 1152px, 100vw"
-              className="object-cover"
-              priority={false}
-            />
+          <div className="relative mt-8 overflow-hidden rounded-2xl ring-1 ring-border-strong">
+            <div className="relative mx-auto aspect-[16/8] w-full max-h-[520px] sm:aspect-[16/7]">
+              <Image
+                src="/team-founders.jpeg"
+                alt="Team Founders — 2019"
+                fill
+                sizes="(min-width: 1024px) 1152px, 100vw"
+                className="h-full w-full object-contain object-center"
+                priority={false}
+              />
+            </div>
           </div>
         </Reveal>
       </section>

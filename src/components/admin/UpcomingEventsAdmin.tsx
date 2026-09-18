@@ -9,7 +9,7 @@ import { fileToDataUrl, formatDate } from "@/lib/utils";
 type UpcomingEvent = {
   _id: string;
   name: string;
-  date: string;
+  date?: string;
   description: string;
   location: string;
   registrationLink: string;
@@ -54,6 +54,7 @@ export default function UpcomingEventsAdmin() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          date: form.date || undefined,
           registrationDeadline: form.registrationDeadline || undefined,
           posterDataUrl: posterDataUrl ?? undefined,
         }),
@@ -88,11 +89,10 @@ export default function UpcomingEventsAdmin() {
         <p className="font-display text-lg font-semibold">Add upcoming event</p>
         <Input label="Name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required />
         <Input
-          label="Date"
+          label="Date (optional — leave blank for TBA)"
           type="date"
           value={form.date}
           onChange={(v) => setForm({ ...form, date: v })}
-          required
         />
         <Input
           label="Location"
@@ -159,7 +159,7 @@ export default function UpcomingEventsAdmin() {
               )}
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold">{e.name}</p>
-                <p className="text-xs text-text-muted">{formatDate(e.date)}</p>
+                <p className="text-xs text-text-muted">{e.date ? formatDate(e.date) : "Date TBA"}</p>
               </div>
               <button
                 onClick={() => handleDelete(e._id)}

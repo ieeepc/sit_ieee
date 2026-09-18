@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 type EventItem = {
   _id: string;
   name: string;
-  date: string;
+  date?: string;
   description: string;
   location?: string;
   registrationLink?: string;
@@ -59,9 +59,9 @@ export default async function UpcomingEventsPage() {
                   Hurry! Registration closes on {formatDate(featured.registrationDeadline)}
                 </div>
               )}
-              <div className="grid gap-0 lg:grid-cols-2">
-                <div className="relative h-64 w-full sm:h-80 lg:h-full lg:min-h-[420px]">
-                  {featured.poster ? (
+              <div className={featured.poster ? "grid gap-0 lg:grid-cols-2" : ""}>
+                {featured.poster && (
+                  <div className="relative h-64 w-full sm:h-80 lg:h-full lg:min-h-[420px]">
                     <Image
                       src={featured.poster}
                       alt={featured.name}
@@ -70,25 +70,25 @@ export default async function UpcomingEventsPage() {
                       className="object-cover"
                       priority
                     />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-accent-violet/25 to-accent-cyan/25">
-                      <CalendarDays className="text-text-muted" size={40} />
+                  </div>
+                )}
+                <div className="flex flex-col justify-center p-7 sm:p-10">
+                  {(featured.date || featured.location) && (
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs font-medium text-accent-cyan sm:text-sm">
+                      {featured.date && (
+                        <span className="flex items-center gap-1.5">
+                          <CalendarDays size={15} />
+                          {formatDate(featured.date)}
+                        </span>
+                      )}
+                      {featured.location && (
+                        <span className="flex items-center gap-1.5 text-text-muted">
+                          <MapPin size={15} />
+                          {featured.location}
+                        </span>
+                      )}
                     </div>
                   )}
-                </div>
-                <div className="flex flex-col justify-center p-7 sm:p-10">
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs font-medium text-accent-cyan sm:text-sm">
-                    <span className="flex items-center gap-1.5">
-                      <CalendarDays size={15} />
-                      {formatDate(featured.date)}
-                    </span>
-                    {featured.location && (
-                      <span className="flex items-center gap-1.5 text-text-muted">
-                        <MapPin size={15} />
-                        {featured.location}
-                      </span>
-                    )}
-                  </div>
                   <h2 className="mt-3 font-display text-2xl font-semibold sm:text-3xl lg:text-4xl">
                     {featured.name}
                   </h2>
@@ -116,7 +116,7 @@ export default async function UpcomingEventsPage() {
               {rest.map((e, i) => (
                 <Reveal key={e._id} delay={i * 0.06}>
                   <article className="glass-card group flex h-full flex-col overflow-hidden rounded-2xl transition-colors hover:border-border-strong">
-                    {e.poster ? (
+                    {e.poster && (
                       <div className="relative h-56 w-full overflow-hidden sm:h-64">
                         <Image
                           src={e.poster}
@@ -126,16 +126,14 @@ export default async function UpcomingEventsPage() {
                           className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       </div>
-                    ) : (
-                      <div className="flex h-56 w-full items-center justify-center bg-gradient-to-br from-accent-violet/20 to-accent-cyan/20 sm:h-64">
-                        <CalendarDays className="text-text-muted" size={32} />
-                      </div>
                     )}
                     <div className="flex flex-1 flex-col p-6">
-                      <div className="flex items-center gap-2 text-xs font-medium text-accent-cyan">
-                        <CalendarDays size={14} />
-                        {formatDate(e.date)}
-                      </div>
+                      {e.date && (
+                        <div className="flex items-center gap-2 text-xs font-medium text-accent-cyan">
+                          <CalendarDays size={14} />
+                          {formatDate(e.date)}
+                        </div>
+                      )}
                       <h3 className="mt-2 font-display text-lg font-semibold sm:text-xl">{e.name}</h3>
                       {e.location && (
                         <div className="mt-1.5 flex items-center gap-1.5 text-xs text-text-muted">

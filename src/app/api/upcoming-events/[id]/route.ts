@@ -29,7 +29,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (!event) return NextResponse.json({ message: "Event not found" }, { status: 404 });
 
     if (body.name !== undefined) event.name = body.name;
-    if (body.date !== undefined) event.date = new Date(body.date);
+    if (body.date !== undefined) event.date = body.date ? new Date(body.date) : undefined;
     if (body.description !== undefined) event.description = body.description;
     if (body.location !== undefined) event.location = body.location;
     if (body.registrationLink !== undefined) event.registrationLink = body.registrationLink;
