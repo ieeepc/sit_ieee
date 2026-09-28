@@ -40,11 +40,13 @@ const cineverse = {
   date: new Date("2026-10-07T17:00:00+05:30"),
   time: "5:00 PM",
   description:
-    "Lights. Camera. IEEE! 🎬\n\n" +
-    "Team IEEE Photonics & ComSoc Joint Chapter rolls out the red carpet for the freshers of 2026. " +
-    "CineVerse is your opening scene on campus — dress up as your favourite movie character, step into the spotlight, " +
-    "and meet the people you'll learn, build and celebrate with for the next four years.\n\n" +
-    "Exclusively for freshers. Your story starts here — grab your spot before the curtains rise!",
+    "Lights. Camera. Exordium.\n\n" +
+    "The IEEE Photonics & ComSoc Joint Chapter welcomes the freshers of 2026 to CineVerse, the beginning of an exciting journey on campus.\n\n" +
+    "CineVerse is more than a welcome event. It is your opening scene — an opportunity to meet new people, build meaningful connections, " +
+    "discover new experiences, and become part of a community that you will learn, create, and grow with throughout your college journey.\n\n" +
+    "Your story begins here. Step into the spotlight and be part of the experience.\n\n" +
+    "Exclusively for the Freshers of 2026.\n\n" +
+    "Register now and take your place before the curtains rise.",
   poster: "/events/cineverse-poster.png",
   posterPublicId: "",
   openRegistration: true,
