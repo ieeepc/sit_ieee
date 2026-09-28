@@ -53,16 +53,16 @@ export default async function RegisterPage({ params }: PageProps<"/upcoming-even
         All upcoming events
       </Link>
 
-      <div className="mt-6 grid gap-8 lg:grid-cols-[0.9fr_1fr] lg:items-start">
+      <div className="mx-auto mt-6 flex max-w-2xl flex-col gap-8">
         {event.poster && (
           <Reveal>
-            <div className="glass-card overflow-hidden rounded-3xl">
+            <div className="glass-card mx-auto max-w-lg overflow-hidden rounded-3xl">
               <Image
                 src={event.poster}
                 alt={event.name}
                 width={1131}
                 height={1600}
-                sizes="(min-width: 1024px) 460px, 100vw"
+                sizes="(min-width: 640px) 512px, 100vw"
                 className="h-auto w-full"
                 priority
               />
