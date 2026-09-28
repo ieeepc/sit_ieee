@@ -34,9 +34,8 @@ export default function Navbar() {
               className="h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-border-strong sm:h-10 sm:w-10"
             />
             <span className="truncate font-display text-sm font-semibold leading-tight tracking-tight sm:text-base">
-              <span className="hidden sm:inline">IEEE Photonics </span>
-              <span className="sm:hidden">IEEE </span>
-              <span className="text-text-muted">&</span> ComSoc
+              <span className="hidden sm:inline">IEEE </span>
+              Photonics <span className="text-text-muted">&</span> ComSoc
             </span>
           </Link>
 
