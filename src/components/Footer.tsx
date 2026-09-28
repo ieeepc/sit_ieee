@@ -73,11 +73,11 @@ export default function Footer() {
               </a>
             </div>
             <p className="mt-4 text-sm leading-relaxed text-text-muted">
-              Sree Sree Shivakumara, Dr, Swamiji Road,
+              Dr. Sree Sree Sivakumara Swamiji Road,
               <br />
-              Bangalore - Honnavar Hwy, Tumakuru,
+              Tumakuru – 572 103,
               <br />
-              Karnataka 572103
+              Karnataka, India
             </p>
           </div>
         </div>

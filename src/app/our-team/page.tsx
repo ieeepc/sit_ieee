@@ -35,7 +35,29 @@ async function getMembers(): Promise<MemberItem[]> {
     .select("name photo tag linkedin github createdAt")
     .sort({ createdAt: 1 })
     .lean();
-  return JSON.parse(JSON.stringify(members));
+  const list: MemberItem[] = JSON.parse(JSON.stringify(members));
+  return list.sort((a, b) => roleRank(a.tag) - roleRank(b.tag)); // stable, so equal roles keep join order
+}
+
+// Display order for "Our Team". Roles not listed come after these; plain members come last.
+const ROLE_ORDER = [
+  "chairperson",
+  "vice chairperson",
+  "secretary",
+  "joint secretary",
+  "treasurer",
+  "joint treasurer",
+  "design head",
+  "web lead",
+  "social media head",
+  "event coordinator",
+];
+
+function roleRank(tag: string) {
+  const role = (tag ?? "").toLowerCase().replace(/\s+/g, " ").trim().replace("chair person", "chairperson").replace(/s$/, "");
+  const i = ROLE_ORDER.indexOf(role);
+  if (i !== -1) return i;
+  return role === "member" || role === "" ? ROLE_ORDER.length + 1 : ROLE_ORDER.length;
 }
 
 function initials(name: string) {

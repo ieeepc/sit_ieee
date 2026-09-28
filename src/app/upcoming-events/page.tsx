@@ -79,7 +79,7 @@ export default async function UpcomingEventsPage() {
                       width={1131}
                       height={1600}
                       sizes="(min-width: 640px) 512px, 100vw"
-                      className="mx-auto h-auto w-full max-w-lg rounded-2xl"
+                      className="mx-auto h-auto max-h-[75vh] w-auto max-w-full rounded-2xl"
                       priority
                     />
                   </div>
