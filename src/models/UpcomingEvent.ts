@@ -11,6 +11,10 @@ const upcomingEventSchema = new Schema(
     registrationDeadline: { type: Date },
     poster: { type: String, default: "" },
     posterPublicId: { type: String, default: "" },
+    slug: { type: String, trim: true, lowercase: true, unique: true, sparse: true }, // pretty URL for /upcoming-events/[slug]/register
+    time: { type: String, default: "" }, // display time, e.g. "5:00 PM"
+    openRegistration: { type: Boolean, default: false }, // collect registrations on this site instead of an external link
+    whatsappLink: { type: String, default: "" }, // shown to students after they register
   },
   { timestamps: true }
 );

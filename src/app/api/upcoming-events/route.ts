@@ -19,6 +19,10 @@ const createSchema = z.object({
   registrationLink: z.string().trim().url().or(z.literal("")).default(""),
   registrationDeadline: z.string().optional(),
   posterDataUrl: z.string().startsWith("data:image/").optional(),
+  slug: z.string().trim().toLowerCase().regex(/^[a-z0-9-]*$/, "Slug can only use letters, numbers and dashes").optional(),
+  time: z.string().trim().default(""),
+  openRegistration: z.boolean().default(false),
+  whatsappLink: z.string().trim().url().or(z.literal("")).default(""),
 });
 
 export async function POST(req: NextRequest) {
@@ -47,10 +51,17 @@ export async function POST(req: NextRequest) {
       registrationDeadline: body.registrationDeadline ? new Date(body.registrationDeadline) : undefined,
       poster,
       posterPublicId,
+      slug: body.slug || undefined,
+      time: body.time,
+      openRegistration: body.openRegistration,
+      whatsappLink: body.whatsappLink,
     });
 
     return NextResponse.json({ event }, { status: 201 });
   } catch (err) {
+    if ((err as { code?: number }).code === 11000) {
+      return NextResponse.json({ message: "That slug is already used by another event." }, { status: 409 });
+    }
     if (err instanceof z.ZodError) {
       return NextResponse.json({ message: err.issues[0]?.message ?? "Invalid input" }, { status: 400 });
     }

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { connectDB } from "@/lib/db";
 import UpcomingEvent from "@/models/UpcomingEvent";
 import Reveal from "@/components/Reveal";
@@ -16,12 +17,22 @@ type EventItem = {
   registrationLink?: string;
   registrationDeadline?: string;
   poster?: string;
+  slug?: string;
+  time?: string;
+  openRegistration?: boolean;
 };
+
+// Events that take on-site registrations get their own Register Now page; others fall back to an external link.
+function registerHref(e: EventItem) {
+  if (e.openRegistration) return `/upcoming-events/${e.slug || e._id}/register`;
+  return e.registrationLink || "";
+}
 
 async function getEvents(): Promise<EventItem[]> {
   await connectDB();
-  const events = await UpcomingEvent.find({}).sort({ date: 1 }).lean();
-  return JSON.parse(JSON.stringify(events));
+  const events: EventItem[] = JSON.parse(JSON.stringify(await UpcomingEvent.find({}).sort({ date: 1 }).lean()));
+  // Mongo sorts missing dates first — keep dated events up front and "TBA" ones at the end.
+  return [...events.filter((e) => e.date), ...events.filter((e) => !e.date)];
 }
 
 export default async function UpcomingEventsPage() {
@@ -61,24 +72,30 @@ export default async function UpcomingEventsPage() {
               )}
               <div className={featured.poster ? "grid gap-0 lg:grid-cols-2" : ""}>
                 {featured.poster && (
-                  <div className="relative h-64 w-full sm:h-80 lg:h-full lg:min-h-[420px]">
+                  <div className="relative h-[28rem] w-full bg-black/30 sm:h-[36rem] lg:h-full lg:min-h-[560px]">
                     <Image
                       src={featured.poster}
                       alt={featured.name}
                       fill
                       sizes="(min-width: 1024px) 576px, 100vw"
-                      className="object-cover"
+                      className="object-contain"
                       priority
                     />
                   </div>
                 )}
                 <div className="flex flex-col justify-center p-7 sm:p-10">
-                  {(featured.date || featured.location) && (
+                  {(featured.date || featured.time || featured.location) && (
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs font-medium text-accent-cyan sm:text-sm">
                       {featured.date && (
                         <span className="flex items-center gap-1.5">
                           <CalendarDays size={15} />
                           {formatDate(featured.date)}
+                        </span>
+                      )}
+                      {featured.time && (
+                        <span className="flex items-center gap-1.5">
+                          <Clock size={15} />
+                          {featured.time}
                         </span>
                       )}
                       {featured.location && (
@@ -92,10 +109,18 @@ export default async function UpcomingEventsPage() {
                   <h2 className="mt-3 font-display text-2xl font-semibold sm:text-3xl lg:text-4xl">
                     {featured.name}
                   </h2>
-                  <p className="mt-4 text-sm leading-relaxed text-text-muted sm:text-base">
+                  <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-text-muted sm:text-base">
                     {featured.description}
                   </p>
-                  {featured.registrationLink && (
+                  {featured.openRegistration ? (
+                    <Link
+                      href={registerHref(featured)}
+                      className="mt-7 inline-flex w-fit items-center gap-2 rounded-full bg-gradient-to-r from-accent-cyan to-accent-violet px-6 py-3 text-sm font-semibold text-black transition-transform hover:scale-[1.03]"
+                    >
+                      Register Now
+                      <ArrowUpRight size={16} />
+                    </Link>
+                  ) : featured.registrationLink ? (
                     <a
                       href={featured.registrationLink}
                       target="_blank"
@@ -105,7 +130,7 @@ export default async function UpcomingEventsPage() {
                       Register Now
                       <ArrowUpRight size={16} />
                     </a>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </article>
@@ -132,6 +157,7 @@ export default async function UpcomingEventsPage() {
                         <div className="flex items-center gap-2 text-xs font-medium text-accent-cyan">
                           <CalendarDays size={14} />
                           {formatDate(e.date)}
+                          {e.time && ` · ${e.time}`}
                         </div>
                       )}
                       <h3 className="mt-2 font-display text-lg font-semibold sm:text-xl">{e.name}</h3>
@@ -148,11 +174,10 @@ export default async function UpcomingEventsPage() {
                           Closes {formatDate(e.registrationDeadline)}
                         </p>
                       )}
-                      {e.registrationLink && (
+                      {registerHref(e) && (
                         <a
-                          href={e.registrationLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          href={registerHref(e)}
+                          {...(e.openRegistration ? {} : { target: "_blank", rel: "noopener noreferrer" })}
                           className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-white/[0.06] px-4 py-2 text-xs font-semibold transition-colors hover:bg-white/[0.12]"
                         >
                           Register

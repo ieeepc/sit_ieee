@@ -23,6 +23,10 @@ const emptyForm = {
   location: "",
   registrationLink: "",
   registrationDeadline: "",
+  time: "",
+  slug: "",
+  openRegistration: false,
+  whatsappLink: "",
 };
 
 export default function UpcomingEventsAdmin() {
@@ -55,6 +59,7 @@ export default function UpcomingEventsAdmin() {
         body: JSON.stringify({
           ...form,
           date: form.date || undefined,
+          slug: form.slug || undefined,
           registrationDeadline: form.registrationDeadline || undefined,
           posterDataUrl: posterDataUrl ?? undefined,
         }),
@@ -94,16 +99,40 @@ export default function UpcomingEventsAdmin() {
           value={form.date}
           onChange={(v) => setForm({ ...form, date: v })}
         />
+        <Input label="Time (e.g. 5:00 PM)" value={form.time} onChange={(v) => setForm({ ...form, time: v })} />
         <Input
           label="Location"
           value={form.location}
           onChange={(v) => setForm({ ...form, location: v })}
         />
-        <Input
-          label="Registration Link"
-          value={form.registrationLink}
-          onChange={(v) => setForm({ ...form, registrationLink: v })}
-        />
+        <label className="flex cursor-pointer items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={form.openRegistration}
+            onChange={(e) => setForm({ ...form, openRegistration: e.target.checked })}
+          />
+          Collect registrations on this site (name, USN, phone)
+        </label>
+        {form.openRegistration ? (
+          <>
+            <Input
+              label="URL slug (optional, e.g. cineverse)"
+              value={form.slug}
+              onChange={(v) => setForm({ ...form, slug: v })}
+            />
+            <Input
+              label="WhatsApp group link (shown after registering)"
+              value={form.whatsappLink}
+              onChange={(v) => setForm({ ...form, whatsappLink: v })}
+            />
+          </>
+        ) : (
+          <Input
+            label="Registration Link"
+            value={form.registrationLink}
+            onChange={(v) => setForm({ ...form, registrationLink: v })}
+          />
+        )}
         <Input
           label="Registration Deadline (optional)"
           type="date"

@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { toast } from "sonner";
-import { Camera, LogOut, Loader2, User, Save } from "lucide-react";
+import { Camera, LogOut, Loader2, User, Save, ClipboardList } from "lucide-react";
 import { useSession, type SessionMember } from "@/components/SessionProvider";
 import { fileToDataUrl } from "@/lib/utils";
 import Reveal from "@/components/Reveal";
@@ -172,6 +173,13 @@ function ProfileForm({ member }: { member: NonNullable<SessionMember> }) {
               {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
               Save changes
             </button>
+            <Link
+              href="/member/registrations"
+              className="flex items-center gap-2 rounded-full border border-border-strong px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-white/[0.05]"
+            >
+              <ClipboardList size={15} />
+              View registrations
+            </Link>
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 rounded-full border border-border-strong px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-white/[0.05]"

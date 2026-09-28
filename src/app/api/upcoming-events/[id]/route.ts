@@ -13,6 +13,9 @@ const updateSchema = z.object({
   registrationLink: z.string().trim().url().or(z.literal("")).optional(),
   registrationDeadline: z.string().optional(),
   posterDataUrl: z.string().startsWith("data:image/").optional(),
+  time: z.string().trim().optional(),
+  openRegistration: z.boolean().optional(),
+  whatsappLink: z.string().trim().url().or(z.literal("")).optional(),
 });
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -35,6 +38,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (body.registrationLink !== undefined) event.registrationLink = body.registrationLink;
     if (body.registrationDeadline !== undefined)
       event.registrationDeadline = body.registrationDeadline ? new Date(body.registrationDeadline) : undefined;
+
+    if (body.time !== undefined) event.time = body.time;
+    if (body.openRegistration !== undefined) event.openRegistration = body.openRegistration;
+    if (body.whatsappLink !== undefined) event.whatsappLink = body.whatsappLink;
 
     if (body.posterDataUrl) {
       const oldPublicId = event.posterPublicId;
