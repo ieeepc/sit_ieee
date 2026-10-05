@@ -40,13 +40,13 @@ export default async function UpcomingEventsPage() {
   const [featured, ...rest] = events;
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20 lg:py-24">
+    <div className="mx-auto max-w-6xl px-5 pb-16 pt-4 sm:pb-20 sm:pt-6 lg:pb-24">
       <Reveal>
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-faint">What&apos;s next</p>
-        <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+        <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
           Upcoming <span className="text-gradient">Events</span>
         </h1>
-        <p className="mt-4 max-w-xl text-base text-text-muted sm:text-lg">
+        <p className="mt-2 max-w-xl text-base text-text-muted">
           Join us for exciting events and activities. Stay tuned for what&apos;s coming next.
         </p>
       </Reveal>
@@ -64,7 +64,7 @@ export default async function UpcomingEventsPage() {
       ) : (
         <>
           <Reveal delay={0.1}>
-            <article className="glass-card mt-14 overflow-hidden rounded-3xl">
+            <article className="glass-card mt-6 overflow-hidden rounded-3xl">
               {featured.registrationDeadline && (
                 <div className="overflow-hidden bg-gradient-to-r from-accent-rose/20 via-accent-amber/20 to-accent-rose/20 px-4 py-2.5 text-center text-xs font-semibold text-accent-amber sm:text-sm">
                   Hurry! Registration closes on {formatDate(featured.registrationDeadline)}
@@ -72,14 +72,14 @@ export default async function UpcomingEventsPage() {
               )}
               <div>
                 {featured.poster && (
-                  <div className="px-4 pt-6 sm:px-8 sm:pt-10">
+                  <div className="px-4 pt-4 sm:px-8">
                     <Image
                       src={featured.poster}
                       alt={featured.name}
                       width={1131}
                       height={1600}
                       sizes="(min-width: 640px) 512px, 100vw"
-                      className="mx-auto h-auto max-h-[75vh] w-auto max-w-full rounded-2xl"
+                      className="mx-auto h-auto max-h-[calc(100svh-17rem)] w-auto max-w-full rounded-2xl"
                       priority
                     />
                   </div>
