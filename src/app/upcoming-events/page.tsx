@@ -70,21 +70,21 @@ export default async function UpcomingEventsPage() {
                   Hurry! Registration closes on {formatDate(featured.registrationDeadline)}
                 </div>
               )}
-              <div>
+              <div className={featured.poster ? "lg:grid lg:grid-cols-[auto_1fr] lg:items-center" : ""}>
                 {featured.poster && (
-                  <div className="px-4 pt-4 sm:px-8">
+                  <div className="px-4 pt-4 sm:px-8 lg:py-6 lg:pl-6 lg:pr-0">
                     <Image
                       src={featured.poster}
                       alt={featured.name}
                       width={1131}
                       height={1600}
                       sizes="(min-width: 640px) 512px, 100vw"
-                      className="mx-auto h-auto max-h-[calc(100svh-17rem)] w-auto max-w-full rounded-2xl"
+                      className="mx-auto h-auto max-h-[calc(100svh-17rem)] w-auto max-w-full rounded-2xl lg:max-w-[460px]"
                       priority
                     />
                   </div>
                 )}
-                <div className="mx-auto flex max-w-3xl flex-col p-7 sm:p-10">
+                <div className="mx-auto flex max-w-3xl flex-col p-7 sm:p-10 lg:mx-0">
                   {(featured.date || featured.time || featured.location) && (
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs font-medium text-accent-cyan sm:text-sm">
                       {featured.date && (
