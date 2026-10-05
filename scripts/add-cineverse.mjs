@@ -37,8 +37,9 @@ const UpcomingEvent = mongoose.model("UpcomingEvent", upcomingEventSchema);
 
 const cineverse = {
   name: "CineVerse — Freshers' Welcome 2026",
-  date: new Date("2026-10-07T17:00:00+05:30"),
-  time: "5:00 PM",
+  date: new Date("2026-10-07T17:15:00+05:30"),
+  time: "5:15 PM",
+  location: "Birla Auditorium",
   description:
     "Lights. Camera. Exordium.\n\n" +
     "The IEEE Photonics & ComSoc Joint Chapter welcomes the freshers of 2026 to CineVerse, the beginning of an exciting journey on campus.\n\n" +
@@ -47,7 +48,7 @@ const cineverse = {
     "Your story begins here. Step into the spotlight and be part of the experience.\n\n" +
     "Exclusively for the Freshers of 2026.\n\n" +
     "Register now and take your place before the curtains rise.",
-  poster: "/events/cineverse-poster.png",
+  poster: "/events/exordium-cineverse-poster.png",
   posterPublicId: "",
   openRegistration: true,
   whatsappLink: "https://chat.whatsapp.com/LTe7MqKHDaALSv6f1YQZFw",
