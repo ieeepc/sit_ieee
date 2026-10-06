@@ -5,18 +5,18 @@ import QRCode from "qrcode";
 import { toast } from "sonner";
 import { Copy, Download, QrCode } from "lucide-react";
 
-// Downloadable QR code for a page on this site. The origin is only known in the browser,
-// so a QR downloaded from the live site points at the live site.
+// QR codes are printed and shared, so they always point at the live site — even when
+// downloaded from localhost or a preview deployment.
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.sitieeepandc.in").replace(/\/$/, "");
+
+// Downloadable QR code for a page on the live site.
 export default function QrCard({ path, title, fileName }: { path: string; title: string; fileName: string }) {
   const [qr, setQr] = useState<string | null>(null);
-  const [url, setUrl] = useState("");
+  const url = `${SITE_URL}${path}`;
 
   useEffect(() => {
-    const full = `${window.location.origin}${path}`;
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- origin is only known in the browser
-    setUrl(full);
-    QRCode.toDataURL(full, { width: 1024, margin: 2 }).then(setQr);
-  }, [path]);
+    QRCode.toDataURL(url, { width: 1024, margin: 2 }).then(setQr);
+  }, [url]);
 
   return (
     <div className="glass-card flex flex-col items-center gap-4 rounded-2xl p-6 text-center">
