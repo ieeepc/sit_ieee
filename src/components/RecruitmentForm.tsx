@@ -61,14 +61,21 @@ export default function RecruitmentForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <Field label="Full name">
-        <input required value={form.name} onChange={(e) => set("name")(e.target.value)} autoComplete="name" className={inputClass} />
+        <input
+          required
+          value={form.name}
+          onChange={(e) => set("name")(e.target.value)}
+          autoComplete="name"
+          placeholder="Enter your full name"
+          className={inputClass}
+        />
       </Field>
       <Field label="USN">
         <input
           required
           value={form.usn}
           onChange={(e) => set("usn")(e.target.value.toUpperCase())}
-          placeholder="e.g. 1SI25EC001"
+          placeholder="Enter your USN"
           className={inputClass}
         />
       </Field>
@@ -78,13 +85,18 @@ export default function RecruitmentForm() {
             required
             value={form.year}
             onChange={(e) => set("year")(e.target.value)}
-            className={`${inputClass} appearance-none bg-bg`}
+            className={`${inputClass} bg-bg-elevated ${form.year ? "text-text" : "text-text-muted"}`}
           >
-            <option value="" disabled>
+            {/* Native option lists ignore the page theme on some browsers — colour them explicitly. */}
+            <option value="" disabled className="bg-bg-elevated text-text-muted">
               Select year
             </option>
-            <option value="1">1st Year</option>
-            <option value="2">2nd Year</option>
+            <option value="1" className="bg-bg-elevated text-text">
+              1st Year
+            </option>
+            <option value="2" className="bg-bg-elevated text-text">
+              2nd Year
+            </option>
           </select>
         </Field>
         <Field label="Branch">
@@ -92,7 +104,7 @@ export default function RecruitmentForm() {
             required
             value={form.branch}
             onChange={(e) => set("branch")(e.target.value)}
-            placeholder="e.g. ECE, CSE, ISE"
+            placeholder="Enter your branch"
             className={inputClass}
           />
         </Field>
@@ -104,7 +116,7 @@ export default function RecruitmentForm() {
           value={form.email}
           onChange={(e) => set("email")(e.target.value)}
           autoComplete="email"
-          placeholder="you@example.com"
+          placeholder="Enter your email"
           className={inputClass}
         />
       </Field>
@@ -116,7 +128,7 @@ export default function RecruitmentForm() {
           value={form.phone}
           onChange={(e) => set("phone")(e.target.value)}
           autoComplete="tel"
-          placeholder="10-digit mobile number"
+          placeholder="Enter your phone number"
           className={inputClass}
         />
       </Field>
