@@ -14,6 +14,7 @@ const links = [
   { href: "/upcoming-events", label: "Upcoming Events" },
   { href: "/timeline", label: "Timeline" },
   { href: "/our-team", label: "Our Team" },
+  { href: "/join-us", label: "Join Us" },
 ];
 
 export default function Navbar() {
