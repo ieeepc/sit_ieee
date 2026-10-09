@@ -178,7 +178,7 @@ function ProfileForm({ member }: { member: NonNullable<SessionMember> }) {
               className="flex items-center gap-2 rounded-full border border-border-strong px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-white/[0.05]"
             >
               <ClipboardList size={15} />
-              View registrations
+              Recruitment registrations
             </Link>
             <button
               onClick={handleLogout}

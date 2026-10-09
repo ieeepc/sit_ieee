@@ -4,7 +4,8 @@ import { connectDB } from "@/lib/db";
 import UpcomingEvent from "@/models/UpcomingEvent";
 import Reveal from "@/components/Reveal";
 import { formatDate } from "@/lib/utils";
-import { CalendarDays, MapPin, ArrowUpRight, PartyPopper, Clock } from "lucide-react";
+import { isEventOver } from "@/lib/events";
+import { CalendarDays, MapPin, ArrowUpRight, Clapperboard, Clock } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +31,8 @@ function registerHref(e: EventItem) {
 
 async function getEvents(): Promise<EventItem[]> {
   await connectDB();
-  const events: EventItem[] = JSON.parse(JSON.stringify(await UpcomingEvent.find({}).sort({ date: 1 }).lean()));
+  const all: EventItem[] = JSON.parse(JSON.stringify(await UpcomingEvent.find({}).sort({ date: 1 }).lean()));
+  const events = all.filter((e) => !isEventOver(e));
   // Mongo sorts missing dates first — keep dated events up front and "TBA" ones at the end.
   return [...events.filter((e) => e.date), ...events.filter((e) => !e.date)];
 }
@@ -53,12 +55,34 @@ export default async function UpcomingEventsPage() {
 
       {!featured ? (
         <Reveal delay={0.1}>
-          <div className="glass-card mt-14 flex flex-col items-center gap-4 rounded-2xl px-8 py-20 text-center">
-            <PartyPopper className="text-accent-cyan" size={32} />
-            <p className="font-display text-xl font-semibold">Nothing on the calendar just yet</p>
-            <p className="max-w-sm text-sm text-text-muted">
-              We&apos;re cooking up the next workshop, hackathon, or fest. Follow our socials or check back soon.
+          <div className="glass-card mt-8 flex flex-col items-center gap-4 rounded-3xl px-8 py-16 text-center sm:py-20">
+            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-accent-cyan/20 to-accent-violet/20 text-accent-cyan">
+              <Clapperboard size={28} />
+            </span>
+            <p className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+              Stay <span className="text-gradient">Tuned!</span>
             </p>
+            <p className="max-w-md text-sm leading-relaxed text-text-muted sm:text-base">
+              Something exciting is on its way. Our next workshop, talk or fest is in the making — check back soon or
+              follow us on Instagram so you don&apos;t miss the announcement.
+            </p>
+            <div className="mt-3 flex flex-wrap justify-center gap-3">
+              <a
+                href="https://www.instagram.com/sit.ieee.photonics.comsoc/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-accent-cyan to-accent-violet px-5 py-2.5 text-sm font-semibold text-black transition-transform hover:scale-[1.03]"
+              >
+                Follow on Instagram
+                <ArrowUpRight size={16} />
+              </a>
+              <Link
+                href="/join-us"
+                className="inline-flex items-center gap-2 rounded-full border border-border-strong px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-white/[0.05]"
+              >
+                Join the Team
+              </Link>
+            </div>
           </div>
         </Reveal>
       ) : (

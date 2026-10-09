@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { LogIn, UserPlus, Loader2, KeyRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/components/SessionProvider";
 import Reveal from "@/components/Reveal";
+import PasswordInput from "@/components/PasswordInput";
 
 export default function MemberLoginPage() {
   const router = useRouter();
@@ -116,15 +118,21 @@ export default function MemberLoginPage() {
                 />
               </Field>
               <Field label="Password">
-                <input
+                <PasswordInput
                   required
-                  type="password"
+                  autoComplete="current-password"
                   value={loginForm.password}
                   onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                   placeholder="Password"
                   className={inputClass}
                 />
               </Field>
+              <Link
+                href="/forgot-password"
+                className="-mt-2 self-end text-xs font-medium text-accent-cyan transition-colors hover:underline"
+              >
+                Forgot password?
+              </Link>
               <SubmitButton loading={loading} label="Login" />
             </form>
           ) : (
@@ -171,9 +179,9 @@ export default function MemberLoginPage() {
                 />
               </Field>
               <Field label="Password">
-                <input
+                <PasswordInput
                   required
-                  type="password"
+                  autoComplete="new-password"
                   minLength={6}
                   value={signupForm.password}
                   onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })}

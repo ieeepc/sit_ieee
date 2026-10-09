@@ -3,22 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, CalendarDays, FileDown, Loader2, Search, UserPlus, Users } from "lucide-react";
+import { ArrowLeft, FileDown, Loader2, Search, Users } from "lucide-react";
 import { useSession } from "@/components/SessionProvider";
-import { formatDate } from "@/lib/utils";
 import { downloadCsv } from "@/lib/csv";
 import Reveal from "@/components/Reveal";
 import QrCard from "@/components/QrCard";
 
-type Registration = { _id: string; name: string; usn: string; phone: string; createdAt: string };
-type EventWithRegistrations = {
-  _id: string;
-  name: string;
-  slug: string;
-  date?: string;
-  time?: string;
-  registrations: Registration[];
-};
 type Application = {
   _id: string;
   name: string;
@@ -45,10 +35,7 @@ function formatRegisteredAt(date: string) {
 export default function MemberRegistrationsPage() {
   const router = useRouter();
   const { member, loading } = useSession();
-  const [events, setEvents] = useState<EventWithRegistrations[] | null>(null);
   const [applications, setApplications] = useState<Application[] | null>(null);
-  const [view, setView] = useState<"events" | "recruitment">("events");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !member) router.replace("/member-login");
@@ -56,25 +43,19 @@ export default function MemberRegistrationsPage() {
 
   useEffect(() => {
     if (!member) return;
-    fetch("/api/registrations", { cache: "no-store" })
-      .then((res) => res.json())
-      .then((data) => setEvents(data.events ?? []))
-      .catch(() => setEvents([]));
     fetch("/api/join-us", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => setApplications(data.applications ?? []))
       .catch(() => setApplications([]));
   }, [member]);
 
-  if (loading || !member || events === null || applications === null) {
+  if (loading || !member || applications === null) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <Loader2 className="animate-spin text-text-muted" />
       </div>
     );
   }
-
-  const selected = events.find((e) => e._id === selectedId) ?? events[0];
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-16">
@@ -86,132 +67,11 @@ export default function MemberRegistrationsPage() {
         Back to profile
       </Link>
       <Reveal>
-        <p className="mt-6 text-xs font-semibold uppercase tracking-[0.2em] text-text-faint">Registrations</p>
-        <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl">Who&apos;s signed up</h1>
+        <p className="mt-6 text-xs font-semibold uppercase tracking-[0.2em] text-text-faint">Recruitment</p>
+        <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl">Who&apos;s applied</h1>
       </Reveal>
 
-      <div className="mt-6 flex flex-wrap gap-2">
-        <button onClick={() => setView("events")} className={pill(view === "events")}>
-          <CalendarDays size={14} />
-          Event Registrations
-        </button>
-        <button onClick={() => setView("recruitment")} className={pill(view === "recruitment")}>
-          <UserPlus size={14} />
-          Recruitment ({applications.length})
-        </button>
-      </div>
-
-      {view === "recruitment" ? (
-        <RecruitmentApplications applications={applications} />
-      ) : !selected ? (
-        <p className="glass-card mt-6 rounded-2xl p-7 text-sm text-text-muted">
-          No events are taking registrations on the site yet.
-        </p>
-      ) : (
-        <>
-          {events.length > 1 && (
-            <div className="mt-4 flex flex-wrap gap-2">
-              {events.map((e) => (
-                <button key={e._id} onClick={() => setSelectedId(e._id)} className={pill(e._id === selected._id)}>
-                  {e.name} ({e.registrations.length})
-                </button>
-              ))}
-            </div>
-          )}
-          <EventRegistrations key={selected._id} event={selected} />
-        </>
-      )}
-    </div>
-  );
-}
-
-function EventRegistrations({ event }: { event: EventWithRegistrations }) {
-  const [query, setQuery] = useState("");
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return event.registrations;
-    return event.registrations.filter(
-      (r) => r.name.toLowerCase().includes(q) || r.usn.toLowerCase().includes(q) || r.phone.includes(q)
-    );
-  }, [event.registrations, query]);
-
-  function exportCsv() {
-    downloadCsv(`${event.slug || event.name}-registrations.csv`, [
-      ["#", "Name", "USN", "Phone", "Registered At"],
-      ...event.registrations.map((r, i) => [
-        String(i + 1),
-        r.name,
-        r.usn,
-        r.phone,
-        new Date(r.createdAt).toLocaleString("en-IN"),
-      ]),
-    ]);
-  }
-
-  return (
-    <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_280px]">
-      <Reveal delay={0.05}>
-        <div className="glass-card min-w-0 rounded-2xl p-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <p className="font-display text-lg font-semibold">{event.name}</p>
-              {event.date && (
-                <p className="text-xs text-text-muted">
-                  {formatDate(event.date)}
-                  {event.time && ` · ${event.time}`}
-                </p>
-              )}
-            </div>
-            <CountBadge count={event.registrations.length} label="registered" />
-          </div>
-
-          <Toolbar query={query} setQuery={setQuery} onExport={exportCsv} canExport={event.registrations.length > 0} />
-
-          <div className="mt-5 overflow-x-auto">
-            <table className="w-full min-w-[520px] text-left text-sm">
-              <thead className="text-xs uppercase tracking-wider text-text-faint">
-                <tr className="border-b border-border">
-                  <th className="py-2.5 pr-3 font-medium">#</th>
-                  <th className="py-2.5 pr-3 font-medium">Name</th>
-                  <th className="py-2.5 pr-3 font-medium">USN</th>
-                  <th className="py-2.5 pr-3 font-medium">Phone</th>
-                  <th className="py-2.5 font-medium">Registered</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.length === 0 ? (
-                  <EmptyRow colSpan={5} none={event.registrations.length === 0} noneText="No registrations yet." />
-                ) : (
-                  filtered.map((r) => (
-                    <tr key={r._id} className="border-b border-border/60 last:border-0">
-                      <td className="py-2.5 pr-3 text-text-faint">
-                        {event.registrations.length - event.registrations.indexOf(r)}
-                      </td>
-                      <td className="py-2.5 pr-3 font-medium">{r.name}</td>
-                      <td className="py-2.5 pr-3 text-text-muted">{r.usn}</td>
-                      <td className="py-2.5 pr-3">
-                        <a href={`tel:${r.phone}`} className="text-text-muted hover:text-accent-cyan">
-                          {r.phone}
-                        </a>
-                      </td>
-                      <td className="py-2.5 text-xs text-text-faint">{formatRegisteredAt(r.createdAt)}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </Reveal>
-
-      <Reveal delay={0.1}>
-        <QrCard
-          path={`/upcoming-events/${event.slug || event._id}/register`}
-          title="Registration QR"
-          fileName={`${event.slug || "event"}-register-qr.png`}
-        />
-      </Reveal>
+      <RecruitmentApplications applications={applications} />
     </div>
   );
 }
