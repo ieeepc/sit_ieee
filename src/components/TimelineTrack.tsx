@@ -31,7 +31,7 @@ export default function TimelineTrack({ events }: { events: EventItem[] }) {
 
   return (
     <div ref={containerRef} className="relative mt-16 sm:mt-20">
-      <div className="absolute left-4 top-2 bottom-2 w-px bg-white/10 sm:left-6" />
+      <div className="absolute left-4 top-2 bottom-2 w-px bg-fg/10 sm:left-6" />
       <motion.div
         className="absolute left-4 top-2 w-px bg-gradient-to-b from-accent-cyan via-accent-violet to-accent-rose sm:left-6"
         style={{ height: lineHeight }}

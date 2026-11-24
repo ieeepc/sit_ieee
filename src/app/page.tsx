@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Sparkles, Lightbulb, Users2, Briefcase, Radio, Cpu } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import MarqueeCards from "@/components/MarqueeCards";
@@ -52,7 +53,7 @@ export default async function Home() {
   return (
     <div>
       <HeroSpotlight>
-        <section className="relative mx-auto max-w-6xl overflow-hidden px-5 pb-20 pt-20 sm:pt-28">
+        <section className="relative mx-auto max-w-6xl overflow-hidden px-5 pb-20 pt-10 sm:pt-14">
           <Cpu
             className="animate-float pointer-events-none absolute right-[6%] top-16 hidden text-accent-cyan/25 lg:block"
             size={54}
@@ -66,7 +67,17 @@ export default async function Home() {
           />
 
           <Reveal>
-            <span className="inline-flex items-center gap-2 rounded-full border border-border-strong bg-white/[0.04] px-4 py-1.5 text-xs font-medium text-text-muted">
+            <Image
+              src="/ieee-bangalore-section-logo-trim.png"
+              alt="IEEE Bangalore Section"
+              width={1905}
+              height={417}
+              className="mx-auto mb-6 block h-[72px] w-auto max-w-full object-contain brightness-0 invert light:brightness-100 light:invert-0"
+            />
+          </Reveal>
+
+          <Reveal>
+            <span className="inline-flex items-center gap-2 rounded-full border border-border-strong bg-fg/[0.04] px-4 py-1.5 text-xs font-medium text-text-muted">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent-cyan" />
               Welcome to IEEE Photonics and ComSoc! Join us for exciting events and activities. Stay tuned!
             </span>
@@ -92,14 +103,14 @@ export default async function Home() {
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Link
                 href="/upcoming-events"
-                className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-accent-cyan to-accent-violet px-6 py-3 text-sm font-semibold text-black transition-transform hover:scale-[1.03]"
+                className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-accent-cyan to-accent-violet px-6 py-3 text-sm font-semibold text-on-accent transition-transform hover:scale-[1.03]"
               >
                 See Upcoming Events
                 <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
                 href="/our-team"
-                className="inline-flex items-center gap-2 rounded-full border border-border-strong px-6 py-3 text-sm font-semibold text-text transition-colors hover:bg-white/[0.05]"
+                className="inline-flex items-center gap-2 rounded-full border border-border-strong px-6 py-3 text-sm font-semibold text-text transition-colors hover:bg-fg/[0.05]"
               >
                 Meet the Team
               </Link>

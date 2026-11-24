@@ -50,13 +50,13 @@ export default function AdminLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full rounded-xl border border-border bg-white/[0.03] px-4 py-2.5 text-sm outline-none transition-colors focus:border-accent-cyan/60"
+              className="w-full rounded-xl border border-border bg-fg/[0.03] px-4 py-2.5 text-sm outline-none transition-colors focus:border-accent-cyan/60"
             />
           </label>
           <button
             type="submit"
             disabled={loading}
-            className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent-cyan to-accent-violet py-3 text-sm font-semibold text-black transition-transform hover:scale-[1.01] disabled:opacity-60"
+            className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent-cyan to-accent-violet py-3 text-sm font-semibold text-on-accent transition-transform hover:scale-[1.01] disabled:opacity-60"
           >
             {loading && <Loader2 size={15} className="animate-spin" />}
             Enter dashboard

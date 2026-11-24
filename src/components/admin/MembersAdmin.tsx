@@ -107,7 +107,7 @@ export default function MembersAdmin() {
             required
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="w-full rounded-xl border border-border bg-white/[0.03] px-4 py-2.5 text-sm outline-none focus:border-accent-cyan/60"
+            className="w-full rounded-xl border border-border bg-fg/[0.03] px-4 py-2.5 text-sm outline-none focus:border-accent-cyan/60"
           />
         </label>
         <label className="block">
@@ -116,7 +116,7 @@ export default function MembersAdmin() {
             required
             value={form.usn}
             onChange={(e) => setForm({ ...form, usn: e.target.value })}
-            className="w-full rounded-xl border border-border bg-white/[0.03] px-4 py-2.5 text-sm outline-none focus:border-accent-cyan/60"
+            className="w-full rounded-xl border border-border bg-fg/[0.03] px-4 py-2.5 text-sm outline-none focus:border-accent-cyan/60"
           />
         </label>
         <label className="block">
@@ -125,13 +125,13 @@ export default function MembersAdmin() {
             required
             value={form.tag}
             onChange={(e) => setForm({ ...form, tag: e.target.value })}
-            className="w-full rounded-xl border border-border bg-white/[0.03] px-4 py-2.5 text-sm outline-none focus:border-accent-cyan/60"
+            className="w-full rounded-xl border border-border bg-fg/[0.03] px-4 py-2.5 text-sm outline-none focus:border-accent-cyan/60"
           />
         </label>
         <button
           type="submit"
           disabled={submitting}
-          className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent-cyan to-accent-violet py-2.5 text-sm font-semibold text-black transition-transform hover:scale-[1.01] disabled:opacity-60"
+          className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent-cyan to-accent-violet py-2.5 text-sm font-semibold text-on-accent transition-transform hover:scale-[1.01] disabled:opacity-60"
         >
           {submitting ? <Loader2 size={15} className="animate-spin" /> : <Plus size={15} />}
           Add
@@ -144,7 +144,7 @@ export default function MembersAdmin() {
         ) : (
           members.map((m) => (
             <div key={m._id} className="glass-card flex flex-wrap items-center gap-3 rounded-2xl p-4">
-              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-white/[0.05]">
+              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-fg/[0.05]">
                 {m.photo ? (
                   <Image src={m.photo} alt={m.name} fill className="object-cover" />
                 ) : (
@@ -160,7 +160,7 @@ export default function MembersAdmin() {
               <input
                 defaultValue={m.tag}
                 onChange={(e) => setEdits((prev) => ({ ...prev, [m._id]: e.target.value }))}
-                className="w-32 rounded-lg border border-border bg-white/[0.03] px-2.5 py-1.5 text-xs outline-none focus:border-accent-cyan/60"
+                className="w-32 rounded-lg border border-border bg-fg/[0.03] px-2.5 py-1.5 text-xs outline-none focus:border-accent-cyan/60"
               />
               <button
                 onClick={() => handleSaveTag(m._id)}

@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Manrope } from "next/font/google";
-import { Toaster } from "sonner";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AnimatedBackground from "@/components/AnimatedBackground";
 import { SessionProvider } from "@/components/SessionProvider";
+import ThemedToaster from "@/components/ThemedToaster";
+
+// Applies the saved theme before first paint so it never flashes. Key matches ThemeToggle.
+const themeInitScript = `(function(){try{var t=localStorage.getItem("theme");document.documentElement.dataset.theme=t==="light"?"light":"dark";}catch(e){document.documentElement.dataset.theme="dark";}})();`;
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -29,15 +32,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      data-theme="dark"
+      suppressHydrationWarning
       className={`${spaceGrotesk.variable} ${manrope.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <SessionProvider>
           <AnimatedBackground />
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />
-          <Toaster theme="dark" position="top-center" richColors />
+          <ThemedToaster />
         </SessionProvider>
       </body>
     </html>

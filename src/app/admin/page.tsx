@@ -54,7 +54,7 @@ export default function AdminPage() {
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 rounded-full border border-border-strong px-4 py-2 text-sm font-medium transition-colors hover:bg-white/[0.05]"
+            className="flex items-center gap-2 rounded-full border border-border-strong px-4 py-2 text-sm font-medium transition-colors hover:bg-fg/[0.05]"
           >
             <LogOut size={14} /> Logout
           </button>
@@ -69,7 +69,7 @@ export default function AdminPage() {
               onClick={() => setTab(t.key)}
               className={cn(
                 "flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors",
-                tab === t.key ? "bg-white/[0.1] text-text" : "text-text-muted hover:text-text"
+                tab === t.key ? "bg-fg/[0.1] text-text" : "text-text-muted hover:text-text"
               )}
             >
               <t.icon size={14} />

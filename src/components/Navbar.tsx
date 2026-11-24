@@ -5,28 +5,37 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X, User, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSession } from "./SessionProvider";
+import ThemeToggle from "./ThemeToggle";
 
 const links = [
   { href: "/", label: "Home" },
   { href: "/upcoming-events", label: "Upcoming Events" },
   { href: "/timeline", label: "Timeline" },
   { href: "/our-team", label: "Our Team" },
-  { href: "/join-us", label: "Join Us" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const { member, loading } = useSession();
+  const { member, faculty, loading } = useSession();
 
   return (
     <header className="sticky top-0 z-50">
       <div className="border-b border-border bg-bg/70 backdrop-blur-xl">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5">
           <Link href="/" className="flex min-w-0 items-center gap-2.5" onClick={() => setOpen(false)}>
+            <Image
+              src="/sit-logo.png"
+              alt="Siddaganga Institute of Technology logo"
+              width={44}
+              height={44}
+              priority
+              className="h-9 w-9 shrink-0 object-contain drop-shadow-sm sm:h-11 sm:w-11"
+            />
+            <span aria-hidden className="h-7 w-px shrink-0 bg-border-strong" />
             <Image
               src="/logo.jpeg"
               alt="SIT IEEE Photonics & ComSoc logo"
@@ -55,7 +64,7 @@ export default function Navbar() {
                   {active && (
                     <motion.span
                       layoutId="nav-active"
-                      className="absolute inset-0 rounded-full bg-white/[0.06] ring-1 ring-border"
+                      className="absolute inset-0 rounded-full bg-fg/[0.06] ring-1 ring-border"
                       transition={{ type: "spring", stiffness: 350, damping: 30 }}
                     />
                   )}
@@ -66,11 +75,12 @@ export default function Navbar() {
           </div>
 
           <div className="hidden items-center gap-3 md:flex">
+            <ThemeToggle />
             {!loading &&
               (member ? (
                 <Link
                   href="/member/dashboard"
-                  className="flex items-center gap-2 rounded-full border border-border-strong bg-white/[0.04] py-1.5 pl-1.5 pr-4 text-sm font-medium transition-colors hover:bg-white/[0.08]"
+                  className="flex items-center gap-2 rounded-full border border-border-strong bg-fg/[0.04] py-1.5 pl-1.5 pr-4 text-sm font-medium transition-colors hover:bg-fg/[0.08]"
                 >
                   {member.photo ? (
                     <Image
@@ -87,23 +97,36 @@ export default function Navbar() {
                   )}
                   {member.name.split(" ")[0]}
                 </Link>
+              ) : faculty ? (
+                <Link
+                  href="/faculty/dashboard"
+                  className="flex items-center gap-2 rounded-full border border-border-strong bg-fg/[0.04] py-1.5 pl-1.5 pr-4 text-sm font-medium transition-colors hover:bg-fg/[0.08]"
+                >
+                  <span className="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-accent-cyan/25">
+                    <GraduationCap size={14} />
+                  </span>
+                  {faculty.username}
+                </Link>
               ) : (
                 <Link
-                  href="/member-login"
-                  className="rounded-full bg-gradient-to-r from-accent-cyan to-accent-violet px-4 py-2 text-sm font-semibold text-black transition-transform hover:scale-[1.03]"
+                  href="/login"
+                  className="rounded-full bg-gradient-to-r from-accent-cyan to-accent-violet px-5 py-2 text-sm font-semibold text-on-accent transition-transform hover:scale-[1.03]"
                 >
-                  Member Login
+                  Login
                 </Link>
               ))}
           </div>
 
-          <button
-            className="rounded-lg p-2 text-text md:hidden"
-            onClick={() => setOpen((v) => !v)}
-            aria-label="Toggle menu"
-          >
-            {open ? <X size={22} /> : <Menu size={22} />}
-          </button>
+          <div className="flex items-center gap-2 md:hidden">
+            <ThemeToggle />
+            <button
+              className="rounded-lg p-2 text-text"
+              onClick={() => setOpen((v) => !v)}
+              aria-label="Toggle menu"
+            >
+              {open ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </nav>
       </div>
 
@@ -123,18 +146,22 @@ export default function Navbar() {
                   onClick={() => setOpen(false)}
                   className={cn(
                     "rounded-lg px-3 py-2.5 text-sm font-medium text-text-muted",
-                    pathname === l.href && "bg-white/[0.06] text-text"
+                    pathname === l.href && "bg-fg/[0.06] text-text"
                   )}
                 >
                   {l.label}
                 </Link>
               ))}
               <Link
-                href={member ? "/member/dashboard" : "/member-login"}
+                href={member ? "/member/dashboard" : faculty ? "/faculty/dashboard" : "/login"}
                 onClick={() => setOpen(false)}
-                className="mt-2 rounded-lg bg-gradient-to-r from-accent-cyan to-accent-violet px-3 py-2.5 text-center text-sm font-semibold text-black"
+                className="mt-2 rounded-lg bg-gradient-to-r from-accent-cyan to-accent-violet px-3 py-2.5 text-center text-sm font-semibold text-on-accent"
               >
-                {member ? `Hi, ${member.name.split(" ")[0]}` : "Member Login"}
+                {member
+                  ? `Hi, ${member.name.split(" ")[0]}`
+                  : faculty
+                    ? `Faculty: ${faculty.username}`
+                    : "Login"}
               </Link>
             </div>
           </motion.div>

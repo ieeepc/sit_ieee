@@ -40,6 +40,12 @@ async function getEvents(): Promise<EventItem[]> {
 export default async function UpcomingEventsPage() {
   const events = await getEvents();
   const [featured, ...rest] = events;
+  // HACK-Z ships its poster with the repo, so the featured card still shows art before an upload exists.
+  const featuredPoster = featured?.poster
+    ? { src: featured.poster, width: 1131, height: 1600 }
+    : featured && /hack[- ]?z/i.test(`${featured.name} ${featured.slug ?? ""}`)
+      ? { src: "/events/hack-z-poster-2026.png", width: 1600, height: 1066 }
+      : null;
 
   return (
     <div className="mx-auto max-w-6xl px-5 pb-16 pt-4 sm:pb-20 sm:pt-6 lg:pb-24">
@@ -48,9 +54,6 @@ export default async function UpcomingEventsPage() {
         <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
           Upcoming <span className="text-gradient">Events</span>
         </h1>
-        <p className="mt-2 max-w-xl text-base text-text-muted">
-          Join us for exciting events and activities. Stay tuned for what&apos;s coming next.
-        </p>
       </Reveal>
 
       {!featured ? (
@@ -71,17 +74,11 @@ export default async function UpcomingEventsPage() {
                 href="https://www.instagram.com/sit.ieee.photonics.comsoc/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-accent-cyan to-accent-violet px-5 py-2.5 text-sm font-semibold text-black transition-transform hover:scale-[1.03]"
+                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-accent-cyan to-accent-violet px-5 py-2.5 text-sm font-semibold text-on-accent transition-transform hover:scale-[1.03]"
               >
                 Follow on Instagram
                 <ArrowUpRight size={16} />
               </a>
-              <Link
-                href="/join-us"
-                className="inline-flex items-center gap-2 rounded-full border border-border-strong px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-white/[0.05]"
-              >
-                Join the Team
-              </Link>
             </div>
           </div>
         </Reveal>
@@ -94,14 +91,14 @@ export default async function UpcomingEventsPage() {
                   Hurry! Registration closes on {formatDate(featured.registrationDeadline)}
                 </div>
               )}
-              <div className={featured.poster ? "lg:grid lg:grid-cols-[auto_1fr] lg:items-center" : ""}>
-                {featured.poster && (
+              <div className={featuredPoster ? "lg:grid lg:grid-cols-[auto_1fr] lg:items-center" : ""}>
+                {featuredPoster && (
                   <div className="px-4 pt-4 sm:px-8 lg:py-6 lg:pl-6 lg:pr-0">
                     <Image
-                      src={featured.poster}
+                      src={featuredPoster.src}
                       alt={featured.name}
-                      width={1131}
-                      height={1600}
+                      width={featuredPoster.width}
+                      height={featuredPoster.height}
                       sizes="(min-width: 640px) 512px, 100vw"
                       className="mx-auto h-auto max-h-[calc(100svh-17rem)] w-auto max-w-full rounded-2xl lg:max-w-[460px]"
                       priority
@@ -140,7 +137,7 @@ export default async function UpcomingEventsPage() {
                   {featured.openRegistration ? (
                     <Link
                       href={registerHref(featured)}
-                      className="mt-7 inline-flex w-fit items-center gap-2 rounded-full bg-gradient-to-r from-accent-cyan to-accent-violet px-6 py-3 text-sm font-semibold text-black transition-transform hover:scale-[1.03]"
+                      className="mt-7 inline-flex w-fit items-center gap-2 rounded-full bg-gradient-to-r from-accent-cyan to-accent-violet px-6 py-3 text-sm font-semibold text-on-accent transition-transform hover:scale-[1.03]"
                     >
                       Register Now
                       <ArrowUpRight size={16} />
@@ -150,7 +147,7 @@ export default async function UpcomingEventsPage() {
                       href={featured.registrationLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-7 inline-flex w-fit items-center gap-2 rounded-full bg-gradient-to-r from-accent-cyan to-accent-violet px-6 py-3 text-sm font-semibold text-black transition-transform hover:scale-[1.03]"
+                      className="mt-7 inline-flex w-fit items-center gap-2 rounded-full bg-gradient-to-r from-accent-cyan to-accent-violet px-6 py-3 text-sm font-semibold text-on-accent transition-transform hover:scale-[1.03]"
                     >
                       Register Now
                       <ArrowUpRight size={16} />
@@ -203,7 +200,7 @@ export default async function UpcomingEventsPage() {
                         <a
                           href={registerHref(e)}
                           {...(e.openRegistration ? {} : { target: "_blank", rel: "noopener noreferrer" })}
-                          className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-white/[0.06] px-4 py-2 text-xs font-semibold transition-colors hover:bg-white/[0.12]"
+                          className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-fg/[0.06] px-4 py-2 text-xs font-semibold transition-colors hover:bg-fg/[0.12]"
                         >
                           Register
                           <ArrowUpRight size={14} />

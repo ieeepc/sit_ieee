@@ -28,11 +28,8 @@ export default function Footer() {
               <Link href="/our-team" className="transition-colors hover:text-text">
                 Our Team
               </Link>
-              <Link href="/join-us" className="transition-colors hover:text-text">
-                Join Us
-              </Link>
-              <Link href="/member-login" className="transition-colors hover:text-text">
-                Member Login
+              <Link href="/login" className="transition-colors hover:text-text">
+                Login
               </Link>
             </div>
           </div>

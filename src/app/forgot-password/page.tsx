@@ -9,7 +9,7 @@ import Reveal from "@/components/Reveal";
 import PasswordInput from "@/components/PasswordInput";
 
 const inputClass =
-  "w-full rounded-xl border border-border bg-white/[0.03] px-4 py-2.5 text-sm text-text placeholder:text-text-faint outline-none transition-colors focus:border-accent-cyan/60 focus:bg-white/[0.05]";
+  "w-full rounded-xl border border-border bg-fg/[0.03] px-4 py-2.5 text-sm text-text placeholder:text-text-faint outline-none transition-colors focus:border-accent-cyan/60 focus:bg-fg/[0.05]";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -119,7 +119,7 @@ export default function ForgotPasswordPage() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent-cyan to-accent-violet py-3 text-sm font-semibold text-black transition-transform hover:scale-[1.01] disabled:opacity-60"
+            className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent-cyan to-accent-violet py-3 text-sm font-semibold text-on-accent transition-transform hover:scale-[1.01] disabled:opacity-60"
           >
             {loading && <Loader2 size={15} className="animate-spin" />}
             Reset password

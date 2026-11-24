@@ -37,7 +37,7 @@ export default function QrCard({ path, title, fileName }: { path: string; title:
         <a
           href={qr ?? undefined}
           download={fileName}
-          className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent-cyan to-accent-violet py-2.5 text-xs font-semibold text-black"
+          className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent-cyan to-accent-violet py-2.5 text-xs font-semibold text-on-accent"
         >
           <Download size={15} />
           Download QR
@@ -47,7 +47,7 @@ export default function QrCard({ path, title, fileName }: { path: string; title:
             navigator.clipboard.writeText(url);
             toast.success("Link copied");
           }}
-          className="flex items-center justify-center gap-2 rounded-xl border border-border-strong py-2.5 text-xs font-semibold transition-colors hover:bg-white/[0.05]"
+          className="flex items-center justify-center gap-2 rounded-xl border border-border-strong py-2.5 text-xs font-semibold transition-colors hover:bg-fg/[0.05]"
         >
           <Copy size={15} />
           Copy link

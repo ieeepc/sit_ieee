@@ -78,7 +78,7 @@ export default function MemberLoginPage() {
           <div className="relative grid grid-cols-2 gap-1">
             <motion.div
               layout
-              className="absolute inset-y-1 w-[calc(50%-4px)] rounded-xl bg-white/[0.08]"
+              className="absolute inset-y-1 w-[calc(50%-4px)] rounded-xl bg-fg/[0.08]"
               animate={{ x: mode === "login" ? 4 : "calc(100% + 4px)" }}
               transition={{ type: "spring", stiffness: 400, damping: 32 }}
             />
@@ -203,7 +203,7 @@ export default function MemberLoginPage() {
 }
 
 const inputClass =
-  "w-full rounded-xl border border-border bg-white/[0.03] px-4 py-2.5 text-sm text-text placeholder:text-text-faint outline-none transition-colors focus:border-accent-cyan/60 focus:bg-white/[0.05]";
+  "w-full rounded-xl border border-border bg-fg/[0.03] px-4 py-2.5 text-sm text-text placeholder:text-text-faint outline-none transition-colors focus:border-accent-cyan/60 focus:bg-fg/[0.05]";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -219,7 +219,7 @@ function SubmitButton({ loading, label }: { loading: boolean; label: string }) {
     <button
       type="submit"
       disabled={loading}
-      className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent-cyan to-accent-violet py-3 text-sm font-semibold text-black transition-transform hover:scale-[1.01] disabled:opacity-60"
+      className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent-cyan to-accent-violet py-3 text-sm font-semibold text-on-accent transition-transform hover:scale-[1.01] disabled:opacity-60"
     >
       {loading && <Loader2 size={15} className="animate-spin" />}
       {label}

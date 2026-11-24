@@ -96,7 +96,7 @@ export default function EventsAdmin() {
             required
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="w-full rounded-xl border border-border bg-white/[0.03] px-4 py-2.5 text-sm outline-none focus:border-accent-cyan/60"
+            className="w-full rounded-xl border border-border bg-fg/[0.03] px-4 py-2.5 text-sm outline-none focus:border-accent-cyan/60"
           />
         </label>
         <label className="block">
@@ -106,7 +106,7 @@ export default function EventsAdmin() {
             type="date"
             value={form.date}
             onChange={(e) => setForm({ ...form, date: e.target.value })}
-            className="w-full rounded-xl border border-border bg-white/[0.03] px-4 py-2.5 text-sm outline-none focus:border-accent-cyan/60"
+            className="w-full rounded-xl border border-border bg-fg/[0.03] px-4 py-2.5 text-sm outline-none focus:border-accent-cyan/60"
           />
         </label>
         <label className="block">
@@ -115,7 +115,7 @@ export default function EventsAdmin() {
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
             rows={3}
-            className="w-full rounded-xl border border-border bg-white/[0.03] px-4 py-2.5 text-sm outline-none focus:border-accent-cyan/60"
+            className="w-full rounded-xl border border-border bg-fg/[0.03] px-4 py-2.5 text-sm outline-none focus:border-accent-cyan/60"
           />
         </label>
         <label className="flex cursor-pointer items-center gap-2 text-sm text-text-muted">
@@ -136,7 +136,7 @@ export default function EventsAdmin() {
         <button
           type="submit"
           disabled={submitting}
-          className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent-cyan to-accent-violet py-2.5 text-sm font-semibold text-black transition-transform hover:scale-[1.01] disabled:opacity-60"
+          className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent-cyan to-accent-violet py-2.5 text-sm font-semibold text-on-accent transition-transform hover:scale-[1.01] disabled:opacity-60"
         >
           {submitting ? <Loader2 size={15} className="animate-spin" /> : <Plus size={15} />}
           Add to timeline
