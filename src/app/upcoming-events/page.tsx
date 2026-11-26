@@ -5,7 +5,7 @@ import UpcomingEvent from "@/models/UpcomingEvent";
 import Reveal from "@/components/Reveal";
 import { formatDate } from "@/lib/utils";
 import { isEventOver } from "@/lib/events";
-import { CalendarDays, MapPin, ArrowUpRight, Clapperboard, Clock } from "lucide-react";
+import { CalendarDays, MapPin, ArrowUpRight, Clapperboard, Clock, FileText, Download } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -40,15 +40,16 @@ async function getEvents(): Promise<EventItem[]> {
 export default async function UpcomingEventsPage() {
   const events = await getEvents();
   const [featured, ...rest] = events;
+  const isHackZ = !!featured && /hack[- ]?z/i.test(`${featured.name} ${featured.slug ?? ""}`);
   // HACK-Z ships its poster with the repo, so the featured card still shows art before an upload exists.
   const featuredPoster = featured?.poster
     ? { src: featured.poster, width: 1131, height: 1600 }
-    : featured && /hack[- ]?z/i.test(`${featured.name} ${featured.slug ?? ""}`)
+    : isHackZ
       ? { src: "/events/hack-z-poster-2026.png", width: 1600, height: 1066 }
       : null;
 
   return (
-    <div className="mx-auto max-w-6xl px-5 pb-16 pt-4 sm:pb-20 sm:pt-6 lg:pb-24">
+    <div className="mx-auto w-full px-5 pb-16 pt-4 sm:px-8 sm:pb-20 sm:pt-6 lg:px-12 lg:pb-24">
       <Reveal>
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-faint">What&apos;s next</p>
         <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
@@ -153,13 +154,34 @@ export default async function UpcomingEventsPage() {
                       <ArrowUpRight size={16} />
                     </a>
                   ) : null}
+
+                  {isHackZ && (
+                    <div className="mt-7 flex flex-wrap gap-3">
+                      <a
+                        href="/events/hack-z-brochure-2026.pdf"
+                        download="HACK-Z-2026-Brochure.pdf"
+                        className="inline-flex items-center gap-2 rounded-lg border border-border-strong px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-fg/[0.04]"
+                      >
+                        <Download size={16} />
+                        Download brochure
+                      </a>
+                      <a
+                        href="/HACK-Z-2026-Abstract-Template.docx"
+                        download="HACK-Z-2026-Abstract-Template.docx"
+                        className="inline-flex items-center gap-2 rounded-lg border border-border-strong px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-fg/[0.04]"
+                      >
+                        <FileText size={16} />
+                        Abstract template
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
             </article>
           </Reveal>
 
           {rest.length > 0 && (
-            <div className="mt-8 grid gap-6 sm:grid-cols-2">
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
               {rest.map((e, i) => (
                 <Reveal key={e._id} delay={i * 0.06}>
                   <article className="glass-card group flex h-full flex-col overflow-hidden rounded-2xl transition-colors hover:border-border-strong">

@@ -13,6 +13,19 @@ const teamMemberSchema = new Schema(
   { _id: false }
 );
 
+const abstractSchema = new Schema(
+  {
+    fileName: { type: String, default: "" },
+    mimeType: { type: String, default: "" },
+    size: { type: Number, default: 0 },
+    url: { type: String, default: "" },
+    publicId: { type: String, default: "" },
+    resourceType: { type: String, enum: ["image", "raw"], default: "raw" },
+    submittedAt: { type: Date },
+  },
+  { _id: false }
+);
+
 // A sign-up for an upcoming event. Hackathon registrations use the staged
 // leader, team-member and abstract fields; older event registrations remain
 // valid through the optional fields.
@@ -28,6 +41,7 @@ const registrationSchema = new Schema(
     domain: { type: String, trim: true },
     teamSize: { type: Number, min: 2, max: 4 },
     teamMembers: { type: [teamMemberSchema], default: [] },
+    // Legacy single abstract kept so older registrations still render.
     abstract: {
       fileName: { type: String, default: "" },
       mimeType: { type: String, default: "" },
@@ -36,18 +50,23 @@ const registrationSchema = new Schema(
       publicId: { type: String, default: "" },
       resourceType: { type: String, enum: ["image", "raw"], default: "raw" },
     },
-    abstractDeadline: { type: Date },
+    abstracts: { type: [abstractSchema], default: [] },
     abstractSubmittedAt: { type: Date },
     stage: { type: Number, enum: [1, 2, 3], default: 1 },
+    driveFolderId: { type: String },
+    driveJsonFileId: { type: String },
   },
   { timestamps: true }
 );
 
-// Preserve one registration per USN for existing events, and additionally
-// prevent duplicate Hack-Z sign-ups by the leader's email or phone.
-registrationSchema.index({ event: 1, usn: 1 }, { unique: true, sparse: true });
-registrationSchema.index({ event: 1, email: 1 }, { unique: true, sparse: true });
-registrationSchema.index({ event: 1, phone: 1 }, { unique: true, sparse: true });
+// Preserve one registration per USN for existing events. This must be a partial
+// index: a compound sparse index still indexes every doc because `event` is always
+// present, so docs without usn (Hack-Z stage 1) would all collide on null.
+// Hack-Z duplicates by email/phone are caught in the register route before insert.
+registrationSchema.index(
+  { event: 1, usn: 1 },
+  { unique: true, partialFilterExpression: { usn: { $type: "string" } } }
+);
 
 export type RegistrationDoc = InferSchemaType<typeof registrationSchema>;
 

@@ -74,7 +74,7 @@ export default async function OurTeamPage() {
   const members = await getMembers();
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-12 sm:py-16 lg:py-20">
+    <div className="mx-auto w-full px-5 py-12 sm:px-8 sm:py-16 lg:px-12 lg:py-20">
       <Reveal>
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-faint">The people behind it</p>
         <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">

@@ -25,30 +25,30 @@ export default function AnimatedBackground() {
         />
       </div>
 
-      {/* Light theme: white background with green, blue, and purple glows */}
+      {/* Light theme: warm cream background with orange and navy glows */}
       <div className="hidden light:block">
         <motion.div
-          className="absolute left-[-14%] top-[-22%] h-[40rem] w-[40rem] rounded-full bg-[#86efac] opacity-45 blur-[120px]"
+          className="absolute left-[-14%] top-[-22%] h-[40rem] w-[40rem] rounded-full bg-[#fdba74] opacity-40 blur-[120px]"
           animate={{ x: [0, 50, 0], y: [0, 30, 0] }}
           transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute right-[-12%] top-[-14%] h-[38rem] w-[38rem] rounded-full bg-[#60a5fa] opacity-40 blur-[120px]"
+          className="absolute right-[-12%] top-[-14%] h-[38rem] w-[38rem] rounded-full bg-[#bfdbfe] opacity-45 blur-[120px]"
           animate={{ x: [0, -50, 0], y: [0, 40, 0] }}
           transition={{ duration: 27, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute left-[30%] top-[38%] h-[26rem] w-[34rem] rounded-full bg-[#c4b5fd] opacity-35 blur-[120px]"
+          className="absolute left-[30%] top-[38%] h-[26rem] w-[34rem] rounded-full bg-[#fed7aa] opacity-30 blur-[120px]"
           animate={{ x: [0, 40, 0], y: [0, -30, 0] }}
           transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute bottom-[-20%] right-[-8%] h-[36rem] w-[40rem] rounded-full bg-[#4ade80] opacity-18 blur-[130px]"
+          className="absolute bottom-[-20%] right-[-8%] h-[36rem] w-[40rem] rounded-full bg-[#fdba74] opacity-25 blur-[130px]"
           animate={{ x: [0, -40, 0], y: [0, -30, 0] }}
           transition={{ duration: 29, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute bottom-[-18%] left-[-10%] h-[30rem] w-[34rem] rounded-full bg-[#a78bfa] opacity-[0.20] blur-[130px]"
+          className="absolute bottom-[-18%] left-[-10%] h-[30rem] w-[34rem] rounded-full bg-[#bfdbfe] opacity-[0.35] blur-[130px]"
           animate={{ x: [0, 40, 0], y: [0, -20, 0] }}
           transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
         />

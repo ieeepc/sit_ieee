@@ -43,7 +43,7 @@ export default function ThemeToggle({ className }: { className?: string }) {
       aria-label={`Switch to ${next} mode`}
       title={`Switch to ${next} mode`}
       className={cn(
-        "flex h-9 w-9 items-center justify-center rounded-full border border-border-strong bg-fg/[0.04] text-text transition-colors hover:bg-fg/[0.08]",
+        "flex h-9 w-9 items-center justify-center rounded-full border border-border-strong bg-fg/[0.04] text-text transition-colors duration-300 hover:border-accent-cyan/60 hover:bg-accent-cyan/10 hover:text-accent-cyan",
         className
       )}
     >

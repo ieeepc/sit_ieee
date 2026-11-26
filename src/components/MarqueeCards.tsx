@@ -11,7 +11,7 @@ export default function MarqueeCards({ pillars }: { pillars: Pillar[] }) {
   const track = [...pillars, ...pillars];
 
   return (
-    <div className="relative -mx-5 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] sm:-mx-6 lg:-mx-8">
+    <div className="relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
       <div
         className="animate-marquee flex w-max gap-5 px-5 sm:px-6 lg:px-8"
         style={{ "--marquee-duration": "38s" } as React.CSSProperties}

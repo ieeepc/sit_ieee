@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "sonner";
-import { Camera, Download, LogOut, Loader2, Search, User, Save } from "lucide-react";
+import { Camera, Download, ExternalLink, LogOut, Loader2, Search, User, Save } from "lucide-react";
 import { useSession, type SessionMember } from "@/components/SessionProvider";
 import { fileToDataUrl } from "@/lib/utils";
 import { downloadCsv } from "@/lib/csv";
@@ -31,15 +31,23 @@ type HackzRegistration = {
   domain: string;
   teamSize: number;
   teamMembers: TeamMember[];
-  abstractDeadline: string | null;
   abstractSubmittedAt: string | null;
-  abstract: {
+  abstracts: {
     fileName: string;
     url: string;
-  } | null;
+    publicId?: string;
+  }[];
   stage: number;
   createdAt: string;
 };
+
+function abstractDownloadUrl(abstract: { url: string; publicId?: string }) {
+  const drivePrefix = "drive:";
+  if (abstract.publicId?.startsWith(drivePrefix)) {
+    return `https://drive.google.com/uc?export=download&id=${abstract.publicId.slice(drivePrefix.length)}`;
+  }
+  return abstract.url;
+}
 
 export default function MemberDashboardPage() {
   const router = useRouter();
@@ -168,7 +176,7 @@ function ProfileForm({ member }: { member: NonNullable<SessionMember> }) {
         "Phone",
         "Email",
         "Abstract Status",
-        "Abstract Deadline",
+        "Abstract Files",
         "Registered At",
       ],
     ];
@@ -194,8 +202,8 @@ function ProfileForm({ member }: { member: NonNullable<SessionMember> }) {
           teamMember.usn,
           teamMember.phone ?? "",
           teamMember.email,
-          registration.abstractSubmittedAt ? "Submitted" : "Pending",
-          registration.abstractDeadline ? new Date(registration.abstractDeadline).toLocaleString("en-IN") : "",
+          registration.abstracts.length ? "Submitted" : "Pending",
+          registration.abstracts.map(abstractDownloadUrl).join(" | "),
           new Date(registration.createdAt).toLocaleString("en-IN"),
         ]);
       });
@@ -205,7 +213,7 @@ function ProfileForm({ member }: { member: NonNullable<SessionMember> }) {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-20">
+    <div className="mx-auto w-full px-5 py-20 sm:px-8 lg:px-12">
       <Reveal>
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-faint">My Profile</p>
         <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -397,16 +405,33 @@ function ProfileForm({ member }: { member: NonNullable<SessionMember> }) {
                         )}
                       </td>
                       <td className="py-3 pr-3">
-                        {registration.abstract?.url ? (
-                          <a
-                            href={registration.abstract.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-xs font-semibold text-accent-cyan"
-                          >
-                            <Download size={13} />
-                            {registration.abstract.fileName || "Abstract"}
-                          </a>
+                        {registration.abstracts.length ? (
+                          <div className="flex flex-col gap-2.5">
+                            {registration.abstracts.map((item, index) => (
+                              <div key={`${item.fileName}-${index}`} className="flex flex-col gap-1.5">
+                                <a
+                                  href={item.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-xs font-semibold text-accent-cyan transition-colors hover:text-accent-violet"
+                                >
+                                  <ExternalLink size={13} />
+                                  {registration.abstracts.length > 1
+                                    ? `View abstract ${index + 1}`
+                                    : "View abstract"}
+                                </a>
+                                <a
+                                  href={abstractDownloadUrl(item)}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-xs font-medium text-text-muted transition-colors hover:text-text"
+                                >
+                                  <Download size={13} />
+                                  {item.fileName || "Download abstract"}
+                                </a>
+                              </div>
+                            ))}
+                          </div>
                         ) : (
                           <span className="text-xs text-accent-amber">Pending</span>
                         )}

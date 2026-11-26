@@ -4,7 +4,8 @@ import { isValidObjectId } from "mongoose";
 import { connectDB } from "@/lib/db";
 import Registration from "@/models/Registration";
 import { findUpcomingEvent, isRegistrationOpen } from "@/lib/events";
-import { uploadDocument, deleteDocument } from "@/lib/cloudinary";
+import { storeAbstract } from "@/lib/abstract-storage";
+import { syncRegistrationToDrive } from "@/lib/registration-drive";
 import { getCurrentMember, isAdminRequest } from "@/lib/auth";
 
 const ABSTRACT_MAX_BYTES = 4 * 1024 * 1024;
@@ -16,14 +17,10 @@ const phoneSchema = z
   .pipe(z.string().regex(/^[6-9]\d{9}$/, "Please enter a valid 10-digit phone number"));
 
 const leaderSchema = z.object({
-  stage: z.literal(1),
   name: z.string().trim().min(2).max(80),
-  phone: phoneSchema.optional(),
-  email: z.string().trim().email("Please enter a valid email address").toLowerCase(),
-  teamName: z.string().trim().min(2).max(80),
-  collegeName: z.string().trim().min(2).max(120),
-  domain: z.string().trim().min(2).max(80),
-  teamSize: z.number().int().min(3).max(4),
+  usn: z.string().trim().toUpperCase().regex(/^[A-Z0-9]{6,15}$/),
+  phone: phoneSchema,
+  email: z.string().trim().email("Please enter a valid email address").toLowerCase().optional(),
 });
 
 const memberSchema = z.object({
@@ -34,49 +31,51 @@ const memberSchema = z.object({
   email: z.string().trim().email("Please enter a valid email address").toLowerCase(),
 });
 
-const teamSchema = z.object({
-  stage: z.literal(2),
-  registrationId: z.string().min(1),
-  teamMembers: z.array(memberSchema).min(2).max(4),
-});
-
-const registerSchema = z.union([
-  leaderSchema,
-  teamSchema,
-  z.object({
-    stage: z.literal(1),
-    name: z.string().trim().min(2).max(80),
-    usn: z.string().trim().toUpperCase().regex(/^[A-Z0-9]{6,15}$/),
-    phone: phoneSchema,
-  }),
-]);
-
-type DuplicateDoc = {
-  _id: unknown;
-  email?: string | null;
-  phone?: string | null;
-  stage: number;
-  teamSize?: number | null;
-};
-
-function phoneChecks(phone?: string) {
-  if (!phone) return [];
-  return [{ phone }, { phone: `+91${phone}` }, { phone: `91${phone}` }, { phone: `0${phone}` }];
+function addDuplicateIssues(
+  teamMembers: { email: string; phone: string; usn: string }[],
+  ctx: z.RefinementCtx
+) {
+  const checks = [
+    { key: "email", label: "email ID" },
+    { key: "phone", label: "phone number" },
+    { key: "usn", label: "USN" },
+  ] as const;
+  for (const check of checks) {
+    const seen = new Map<string, number>();
+    teamMembers.forEach((member, index) => {
+      const value = member[check.key];
+      const previous = seen.get(value);
+      if (previous !== undefined) {
+        ctx.addIssue({
+          code: "custom",
+          message: `Team member ${previous + 1} and team member ${index + 1} share the same ${check.label}. Each member must be unique.`,
+        });
+      } else {
+        seen.set(value, index);
+      }
+    });
+  }
 }
 
-// Registration is a capability: only return it when email AND phone match the stored
-// leader, so a duplicate sign-up can continue on the same team.
-function duplicatePayload(existing: DuplicateDoc, email: string, phone: string | undefined, whatsappLink: string) {
-  const verified = !!phone && existing.email === email && existing.phone === phone;
-  return {
-    message: "This email or phone number is already registered for Hack-Z.",
-    alreadyRegistered: true,
-    whatsappLink,
-    ...(verified
-      ? { registrationId: String(existing._id), stage: existing.stage, teamSize: existing.teamSize ?? 3 }
-      : {}),
-  };
-}
+// The whole Hack-Z application (team, members and abstract) arrives together, so a
+// registration only exists in the database once every stage is complete.
+const applicationSchema = z
+  .object({
+    teamName: z.string().trim().min(2).max(80),
+    collegeName: z.string().trim().min(2).max(120),
+    domain: z.string().trim().min(2).max(80),
+    teamSize: z.number().int().min(3).max(4),
+    teamMembers: z.array(memberSchema).min(3).max(4),
+  })
+  .superRefine(({ teamMembers, teamSize }, ctx) => {
+    if (teamMembers.length !== teamSize) {
+      ctx.addIssue({
+        code: "custom",
+        message: `Add all ${teamSize} team members before submitting.`,
+      });
+    }
+    addDuplicateIssues(teamMembers, ctx);
+  });
 
 // Members and admins can view the HACK-Z registrations and export them.
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -102,8 +101,13 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
       domain: registration.domain ?? "",
       teamSize: registration.teamSize ?? registration.teamMembers?.length ?? 0,
       teamMembers: registration.teamMembers ?? [],
-      abstractDeadline: registration.abstractDeadline ?? null,
       abstractSubmittedAt: registration.abstractSubmittedAt ?? null,
+      abstracts:
+        registration.abstracts?.length
+          ? registration.abstracts
+          : registration.abstract?.url
+            ? [registration.abstract]
+            : [],
       abstract: registration.abstract ?? null,
       stage: registration.stage,
       createdAt: registration.createdAt,
@@ -112,6 +116,8 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 }
 
 // Public: a student registering for an event from the Register Now page / QR code.
+// Hack-Z applications arrive in one request, together with the abstract, so a team
+// is only stored once every stage is complete.
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
@@ -120,11 +126,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (contentType.includes("multipart/form-data")) {
       const form = await req.formData();
       const registrationId = String(form.get("registrationId") ?? "");
+      const applicationRaw = form.get("application");
       const file = form.get("abstract");
-      if (!registrationId) return NextResponse.json({ message: "Registration is missing." }, { status: 400 });
-      if (!isValidObjectId(registrationId)) {
-        return NextResponse.json({ message: "Registration not found." }, { status: 404 });
-      }
+
       if (!(file instanceof File) || file.size === 0) {
         return NextResponse.json({ message: "Choose an abstract file to upload." }, { status: 400 });
       }
@@ -139,51 +143,107 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       await connectDB();
       const event = await findUpcomingEvent(id);
       if (!event) return NextResponse.json({ message: "Event not found" }, { status: 404 });
-      const registration = await Registration.findOne({ _id: registrationId, event: event._id });
-      if (!registration) return NextResponse.json({ message: "Registration not found." }, { status: 404 });
 
-      const teamSize = registration.teamSize ?? 2;
-      if (registration.stage < 2 || (registration.teamMembers?.length ?? 0) < teamSize) {
-        return NextResponse.json(
-          { message: "Complete your team member details before submitting the abstract." },
-          { status: 400 }
-        );
-      }
-      if (registration.abstractDeadline && Date.now() > registration.abstractDeadline.getTime()) {
-        return NextResponse.json(
-          { message: "The abstract submission window has closed. Contact the organisers if you need help." },
-          { status: 400 }
-        );
+      let registration;
+      if (registrationId) {
+        if (!isValidObjectId(registrationId)) {
+          return NextResponse.json({ message: "Registration not found." }, { status: 404 });
+        }
+        const existing = await Registration.findOne({ _id: registrationId, event: event._id });
+        if (!existing) return NextResponse.json({ message: "Registration not found." }, { status: 404 });
+        const teamSize = existing.teamSize ?? 3;
+        if (existing.stage < 2 || (existing.teamMembers?.length ?? 0) < teamSize) {
+          return NextResponse.json(
+            { message: "Complete your team details before adding another abstract." },
+            { status: 400 }
+          );
+        }
+        registration = existing;
+      } else {
+        if (!isRegistrationOpen(event)) {
+          return NextResponse.json({ message: "Registrations for this event are closed." }, { status: 400 });
+        }
+        if (!applicationRaw) {
+          return NextResponse.json(
+            { message: "Complete stages 1 and 2 before submitting your abstract." },
+            { status: 400 }
+          );
+        }
+        let application: z.infer<typeof applicationSchema>;
+        try {
+          application = applicationSchema.parse(JSON.parse(String(applicationRaw)));
+        } catch (err) {
+          if (err instanceof SyntaxError) {
+            return NextResponse.json(
+              { message: "Could not read your team details. Fill them again." },
+              { status: 400 }
+            );
+          }
+          throw err;
+        }
+
+        // Re-applying is allowed: every complete submission is its own entry.
+        const leader = application.teamMembers[0];
+        registration = await Registration.create({
+          event: event._id,
+          name: leader.name,
+          email: leader.email,
+          phone: leader.phone,
+          teamName: application.teamName,
+          collegeName: application.collegeName,
+          domain: application.domain,
+          teamSize: application.teamSize,
+          teamMembers: application.teamMembers,
+          stage: 3,
+        });
+        // Creates the team's Drive folder before the file is uploaded into it.
+        await syncRegistrationToDrive(registration, event.name);
       }
 
-      if (registration.abstract?.publicId) {
-        await deleteDocument(registration.abstract.publicId, registration.abstract.resourceType).catch(() => {});
-      }
-      const uploaded = await uploadDocument(
+      const uploaded = await storeAbstract(
         Buffer.from(await file.arrayBuffer()),
         file.name,
         file.type,
-        "hack-z-abstracts"
-      );
-      registration.abstract = {
+        "hack-z",
+        registration.driveFolderId
+      ).catch(async (err) => {
+        // Never keep a registration that has no abstract.
+        if (!registrationId) await registration.deleteOne();
+        throw err;
+      });
+
+      const entry = {
         fileName: file.name,
         mimeType: file.type,
         size: file.size,
         url: uploaded.url,
         publicId: uploaded.publicId,
         resourceType: uploaded.resourceType,
+        submittedAt: new Date(),
       };
-      registration.abstractSubmittedAt = new Date();
+      registration.abstracts.push(entry);
+      // Keep the legacy field populated for older consumers; never overwrite it.
+      if (!registration.abstract?.url) {
+        registration.abstract = entry;
+      }
+      registration.abstractSubmittedAt = entry.submittedAt;
       registration.stage = 3;
       await registration.save();
+      await syncRegistrationToDrive(registration, event.name);
 
       return NextResponse.json(
-        { ok: true, abstractUrl: uploaded.url, whatsappLink: event.whatsappLink },
+        {
+          ok: true,
+          registrationId: registration._id.toString(),
+          abstract: { fileName: entry.fileName, url: entry.url },
+          abstractCount: registration.abstracts.length,
+          whatsappLink: event.whatsappLink,
+        },
         { status: 200 }
       );
     }
 
-    const body = registerSchema.parse(await req.json());
+    const body = leaderSchema.parse(await req.json());
     await connectDB();
 
     const event = await findUpcomingEvent(id);
@@ -191,79 +251,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (!isRegistrationOpen(event)) {
       return NextResponse.json({ message: "Registrations for this event are closed." }, { status: 400 });
     }
-
-    if (body.stage === 2) {
-      if (!isValidObjectId(body.registrationId)) {
-        return NextResponse.json({ message: "Registration not found." }, { status: 404 });
-      }
-      const registration = await Registration.findOne({ _id: body.registrationId, event: event._id });
-      if (!registration) return NextResponse.json({ message: "Registration not found." }, { status: 404 });
-      if (registration.stage === 3) {
-        return NextResponse.json(
-          { message: "Team member details are locked once your abstract is submitted." },
-          { status: 409 }
-        );
-      }
-      const teamSize = registration.teamSize ?? 3;
-      if (body.teamMembers.length < teamSize) {
-        return NextResponse.json(
-          { message: `Add all ${teamSize} team members before continuing.` },
-          { status: 400 }
-        );
-      }
-      registration.teamMembers = body.teamMembers;
-      registration.teamSize = Math.max(teamSize, body.teamMembers.length);
-      if (!registration.abstractDeadline) {
-        registration.abstractDeadline = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
-      }
-      registration.stage = 2;
-      await registration.save();
-      return NextResponse.json({
-        ok: true,
-        registrationId: registration._id.toString(),
-        abstractDeadline: registration.abstractDeadline,
-        whatsappLink: event.whatsappLink,
-      });
-    }
-
     const hackathon = /hack[- ]?z/i.test(`${event.name} ${event.slug ?? ""}`);
     if (hackathon) {
-      if (!("email" in body)) return NextResponse.json({ message: "Email is required." }, { status: 400 });
-      const normalizedEmail = body.email.toLowerCase();
-      const duplicateFilter = { event: event._id, $or: [{ email: normalizedEmail }, ...phoneChecks(body.phone)] };
-
-      const existing = await Registration.findOne(duplicateFilter).lean();
-      if (existing) {
-        return NextResponse.json(duplicatePayload(existing, normalizedEmail, body.phone, event.whatsappLink), {
-          status: 409,
-        });
-      }
-
-      try {
-        const registration = await Registration.create({
-          event: event._id,
-          name: body.name,
-          phone: body.phone,
-          email: body.email,
-          teamName: body.teamName,
-          collegeName: body.collegeName,
-          domain: body.domain,
-          teamSize: body.teamSize,
-          stage: 1,
-        });
-        return NextResponse.json({ ok: true, registrationId: registration._id.toString() }, { status: 201 });
-      } catch (err) {
-        if ((err as { code?: number }).code === 11000) {
-          const raced = await Registration.findOne(duplicateFilter).lean();
-          return NextResponse.json(
-            raced
-              ? duplicatePayload(raced, normalizedEmail, body.phone, event.whatsappLink)
-              : { message: "This email or phone number is already registered for Hack-Z.", whatsappLink: event.whatsappLink },
-            { status: 409 }
-          );
-        }
-        throw err;
-      }
+      return NextResponse.json(
+        { message: "Your Hack-Z registration is saved only after you submit your abstract." },
+        { status: 400 }
+      );
     }
 
     try {

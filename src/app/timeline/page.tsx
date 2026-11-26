@@ -23,7 +23,7 @@ export default async function TimelinePage() {
   const events = await getEvents();
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-16 sm:py-20 lg:py-24">
+    <div className="mx-auto w-full px-5 py-16 sm:px-8 sm:py-20 lg:px-12 lg:py-24">
       <Reveal>
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-faint">Since 2019</p>
         <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">

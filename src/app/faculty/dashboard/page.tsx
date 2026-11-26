@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   CalendarDays,
+  Download,
   ExternalLink,
   FileText,
   FileSpreadsheet,
@@ -107,7 +108,7 @@ function Dashboard({ faculty }: { faculty: NonNullable<SessionFaculty> }) {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-5 py-16">
+    <div className="mx-auto w-full px-5 py-16 sm:px-8 lg:px-12">
       <Reveal>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -292,6 +293,14 @@ function DocRow({ doc, canDelete, onDelete }: { doc: FacultyDoc; canDelete: bool
           className="rounded-lg p-2 text-text-muted transition-colors hover:bg-fg/[0.06] hover:text-accent-cyan"
         >
           <ExternalLink size={16} />
+        </a>
+        <a
+          href={doc.url}
+          download={doc.fileName}
+          aria-label={`Download ${doc.title}`}
+          className="rounded-lg p-2 text-text-muted transition-colors hover:bg-fg/[0.06] hover:text-accent-violet"
+        >
+          <Download size={16} />
         </a>
         {canDelete && (
           <button

@@ -44,3 +44,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# student abstract uploads (local fallback)
+/public/abstracts/
+
+# local dev server log
+/.devserver.log

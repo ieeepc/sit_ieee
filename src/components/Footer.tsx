@@ -5,7 +5,7 @@ import { InstagramIcon, FacebookIcon, LinkedinIcon } from "@/components/BrandIco
 export default function Footer() {
   return (
     <footer className="border-t border-border bg-bg-elevated/60">
-      <div className="mx-auto max-w-6xl px-5 py-12">
+      <div className="mx-auto w-full px-5 py-12 sm:px-8 lg:px-12">
         <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-3">
           <div>
             <p className="font-display text-lg font-semibold">
@@ -41,7 +41,7 @@ export default function Footer() {
                 href="https://www.instagram.com/sit.ieee.photonics.comsoc/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full border border-border p-2 text-text-muted transition-colors hover:border-border-strong hover:text-text"
+                className="rounded-full border border-border p-2 text-text-muted transition-colors duration-300 hover:border-accent-cyan/60 hover:bg-accent-cyan/10 hover:text-accent-cyan"
                 aria-label="Instagram"
               >
                 <InstagramIcon size={16} />
@@ -50,7 +50,7 @@ export default function Footer() {
                 href="https://www.facebook.com/sit.photonics/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full border border-border p-2 text-text-muted transition-colors hover:border-border-strong hover:text-text"
+                className="rounded-full border border-border p-2 text-text-muted transition-colors duration-300 hover:border-accent-cyan/60 hover:bg-accent-cyan/10 hover:text-accent-cyan"
                 aria-label="Facebook"
               >
                 <FacebookIcon size={16} />
@@ -59,25 +59,25 @@ export default function Footer() {
                 href="https://www.linkedin.com/company/ieee-photonics-and-comsoc-sit-chapter/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full border border-border p-2 text-text-muted transition-colors hover:border-border-strong hover:text-text"
+                className="rounded-full border border-border p-2 text-text-muted transition-colors duration-300 hover:border-accent-cyan/60 hover:bg-accent-cyan/10 hover:text-accent-cyan"
                 aria-label="LinkedIn"
               >
                 <LinkedinIcon size={16} />
               </a>
               <a
                 href="mailto:sit.photonics.chapter@gmail.com"
-                className="rounded-full border border-border p-2 text-text-muted transition-colors hover:border-border-strong hover:text-text"
+                className="rounded-full border border-border p-2 text-text-muted transition-colors duration-300 hover:border-accent-cyan/60 hover:bg-accent-cyan/10 hover:text-accent-cyan"
                 aria-label="Email"
               >
                 <Mail size={16} />
               </a>
             </div>
             <p className="mt-4 text-sm leading-relaxed text-text-muted">
-              Dr. Sree Sree Sivakumara Swamiji Road,
+              Siddaganga Institute of Technology (SIT)
               <br />
-              Tumakuru – 572 103,
+              Dr. Sree Sree Sivakumara Swamiji Road (B.H. Road / NH 206)
               <br />
-              Karnataka, India
+              Tumakuru (Tumkur), Karnataka – 572 103
             </p>
           </div>
         </div>

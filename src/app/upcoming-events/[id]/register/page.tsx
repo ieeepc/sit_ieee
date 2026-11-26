@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CalendarDays, Clock, MapPin, ArrowLeft } from "lucide-react";
+import { CalendarDays, Clock, MapPin, ArrowLeft, Download, FileText } from "lucide-react";
 import { connectDB } from "@/lib/db";
 import { findUpcomingEvent, isRegistrationOpen } from "@/lib/events";
 import { formatDate } from "@/lib/utils";
@@ -45,42 +45,50 @@ export default async function RegisterPage({ params }: PageProps<"/upcoming-even
   const open = isRegistrationOpen(event);
   if (/hack[- ]?z/i.test(`${event.name} ${event.slug ?? ""}`) && open) {
     const stageLabels = [
-      { number: "01", name: "Your team", description: "Team name, college, domain and size", stage: "leader", icon: "01" },
-      { number: "02", name: "Members", description: "Three or four team members", stage: "team", icon: "02" },
-      { number: "03", name: "Abstract", description: "Submit your idea and presentation", stage: "abstract", icon: "03" },
+      { number: "01", name: "Your team", stage: "leader" },
+      { number: "02", name: "Members", stage: "team" },
+      { number: "03", name: "Abstract", stage: "abstract" },
     ] as const;
     const eventId = event.slug || event._id;
 
     return (
-      <main className="relative min-h-[calc(100svh-5rem)] overflow-hidden bg-bg px-5 py-10 text-text sm:py-14">
-        <div className="stage-grid pointer-events-none absolute inset-0 opacity-100" />
-        <div className="stage-particles pointer-events-none absolute inset-0 opacity-40" />
-        <div className="stage-aurora pointer-events-none absolute -left-[20%] -top-[45%] h-[130%] w-[140%] opacity-60" />
-        <div className="stage-orb pointer-events-none absolute -right-24 top-1/3 h-80 w-80 rounded-full bg-accent-cyan/20 blur-[100px]" />
-        <div
-          className="stage-orb pointer-events-none absolute bottom-0 left-1/4 h-72 w-72 rounded-full bg-accent-violet/20 blur-[110px]"
-          style={{ animationDelay: "-5s" }}
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_65%,rgba(226,29,72,.12),transparent_28%),radial-gradient(circle_at_20%_15%,rgba(59,130,246,.10),transparent_25%)]" />
-        <div className="relative mx-auto max-w-3xl">
+      <main className="bg-bg px-5 py-12 text-text sm:py-16">
+        <div className="mx-auto w-full max-w-3xl">
           <Link
             href="/upcoming-events"
-            className="group inline-flex items-center gap-1.5 text-xs font-medium text-text-muted transition-colors hover:text-text"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-text-muted transition-colors hover:text-text"
           >
-            <ArrowLeft size={14} className="transition-transform duration-300 group-hover:-translate-x-1" />
+            <ArrowLeft size={14} />
             All upcoming events
           </Link>
 
-          <div className="stage-enter mt-10 sm:mt-14">
-            <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.32em] text-accent-cyan">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="stage-blink absolute inline-flex h-full w-full rounded-full bg-accent-cyan" />
-              </span>
+          <div className="mt-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-text-faint">
               HACK-Z registration
             </p>
-            <h1 className="mt-4 font-display text-2xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
-              HACK-Z <span className="text-gradient-animated">12 Hour National Level Hackathon</span>
+            <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+              {event.name}
             </h1>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a
+                href="/events/hack-z-brochure-2026.pdf"
+                download="HACK-Z-2026-Brochure.pdf"
+                className="inline-flex items-center gap-2 rounded-lg border border-border-strong px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-fg/[0.04]"
+              >
+                <Download size={16} />
+                Download brochure
+              </a>
+              <a
+                href="/HACK-Z-2026-Abstract-Template.docx"
+                download="HACK-Z-2026-Abstract-Template.docx"
+                className="inline-flex items-center gap-2 rounded-lg border border-border-strong px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-fg/[0.04]"
+              >
+                <FileText size={16} />
+                Abstract template
+              </a>
+            </div>
+
             <RegistrationChooser eventId={eventId} stages={stageLabels} />
           </div>
         </div>

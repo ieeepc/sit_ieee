@@ -24,7 +24,7 @@ export default function StageStepper({ eventId, current }: { eventId: string; cu
           initial={{ scaleX: 0 }}
           animate={{ scaleX: fill }}
           transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 110, damping: 22, delay: 0.15 }}
-          className="stage-progress absolute inset-0 origin-left rounded-full shadow-[0_0_18px_rgba(34,211,238,.45)]"
+          className="absolute inset-0 origin-left rounded-full bg-accent-cyan"
         />
       </div>
 
@@ -48,20 +48,17 @@ export default function StageStepper({ eventId, current }: { eventId: string; cu
                 >
                   <span className="relative flex h-11 w-11 items-center justify-center">
                     {active && (
-                      <>
-                        <span
-                          aria-hidden
-                          className="stage-active-ring absolute inset-0 rounded-full border border-accent-rose/60"
-                        />
-                        <span aria-hidden className="absolute inset-[-7px] rounded-full bg-accent-rose/20 blur-lg" />
-                      </>
+                      <span
+                        aria-hidden
+                        className="stage-active-ring absolute inset-0 rounded-full border border-accent-cyan/50"
+                      />
                     )}
                     <motion.span
                       whileHover={{ scale: 1.08 }}
                       whileTap={{ scale: 0.94 }}
                       className={`relative flex h-11 w-11 items-center justify-center rounded-full border text-sm font-semibold transition-colors duration-300 ${
                         active
-                          ? "border-accent-rose bg-accent-rose text-white shadow-[0_0_30px_rgba(251,113,133,.45)]"
+                          ? "border-accent-cyan bg-accent-cyan text-on-accent"
                           : complete
                             ? "border-accent-cyan/60 bg-accent-cyan/10 text-accent-cyan"
                             : "border-border-strong bg-fg/[0.03] text-text-muted group-hover:border-accent-cyan/50 group-hover:text-text"
@@ -83,7 +80,7 @@ export default function StageStepper({ eventId, current }: { eventId: string; cu
                   <span
                     className={`px-1 text-[10px] font-medium leading-tight transition-colors duration-300 sm:text-xs ${
                       active
-                        ? "text-accent-rose"
+                        ? "text-accent-cyan"
                         : complete
                           ? "text-accent-cyan"
                           : "text-text-muted group-hover:text-text"
