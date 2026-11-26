@@ -158,7 +158,7 @@ export default async function UpcomingEventsPage() {
                   {isHackZ && (
                     <div className="mt-7 flex flex-wrap gap-3">
                       <a
-                        href="/events/hack-z-brochure-2026.pdf"
+                        href="/events/hack-z-brochure-2026-v2.pdf"
                         download="HACK-Z-2026-Brochure.pdf"
                         className="inline-flex items-center gap-2 rounded-lg border border-border-strong px-4 py-2.5 text-sm font-semibold transition-colors hover:bg-fg/[0.04]"
                       >
